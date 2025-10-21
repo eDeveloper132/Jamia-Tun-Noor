@@ -1,0 +1,28 @@
+{
+  "version": 2,
+  "name": "talabaoasatiza",
+  "builds": [
+    {
+      "src": "src/index.mjs",
+      "use": "@vercel/node"
+    }
+  ],
+  "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "src/index.mjs"
+    },
+    {
+      "src": "/(.*)",
+      "dest": "src/index.mjs"
+    }
+  ],
+  "env": {
+    "MONGO_URI": "@mongo_uri",
+    "JWT_SECRET": "@jwt_secret",
+    "EMAIL_USER": "@email_user",
+    "EMAIL_PASS": "@email_pass",
+    "EMAIL_FROM": "@email_from",
+    "PORT": "4500"
+  }
+}
