@@ -1,7 +1,7 @@
 {
   "version": 2,
   "functions": {
-    "dist/index.js": {
+    "dist/index.mjs": {
       "maxDuration": 10
     }
   },
