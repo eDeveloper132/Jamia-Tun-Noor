@@ -4,7 +4,13 @@ import express from 'express';
 import cors from 'cors';
 import type { Request, Response } from 'express';
 import cookieParser from 'cookie-parser';
-import connectToDatabase from "./db/db.js";
+import connectToDatabase from "./config/db/db.js";
+import authRoutes from "./routes/auth.js";
+import userRoutes from "./routes/users.js";
+import attendanceRoutes from "./routes/attendance.js";
+import taskRoutes from "./routes/tasks.js";
+import examRoutes from "./routes/exams.js";
+
 const app = express();
 const PORT = process.env.PORT || 4000;
 
@@ -17,6 +23,14 @@ app.use(express.static(path.join('public')));
 app.get("/", (req: Request, res: Response) => {
     res.send("talabaoasatiza Service is running");
 });
+
+
+  app.use("/api/auth", authRoutes);
+  app.use("/api/users", userRoutes);
+  app.use("/api/attendance", attendanceRoutes);
+  app.use("/api/tasks", taskRoutes);
+  app.use("/api/exams", examRoutes);
+
 
 app.use((req: Request, res: Response) => {
     res.status(404).send("Route not found");
