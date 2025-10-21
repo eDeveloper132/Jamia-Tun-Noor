@@ -1,6 +1,6 @@
 // lib/mongodb.ts
 import mongoose from 'mongoose';
-import URI from '../config/config.js';
+import URI from '../config.js';
 if (!URI) {
     throw new Error('Invalid/Missing "URI"');
 }
