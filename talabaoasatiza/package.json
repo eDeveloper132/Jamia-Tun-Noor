@@ -11,6 +11,7 @@
     "seed": "ts-node --esm src/seed/seed.ts",
     "seed:full": "npm run build && node ./dist/seed/fullSeed.js"
   },
+  "engines": { "node": "18.x" },
   "keywords": [],
   "author": "Muhammad Ilyas",
   "license": "ISC",
@@ -24,7 +25,8 @@
     "jsonwebtoken": "^9.0.2",
     "mongoose": "^8.19.2",
     "nodemailer": "^7.0.9",
-    "pdfkit": "^0.17.2"
+    "pdfkit": "^0.17.2",
+    "serverless-http": "^4.0.0"
   },
   "devDependencies": {
     "@types/bcrypt": "^6.0.0",

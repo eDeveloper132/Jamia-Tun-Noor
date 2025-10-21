@@ -10,7 +10,7 @@ import userRoutes from "./routes/users.js";
 import attendanceRoutes from "./routes/attendance.js";
 import taskRoutes from "./routes/tasks.js";
 import examRoutes from "./routes/exams.js";
-
+import ServerlessHttp from "serverless-http";
 const app = express();
 const PORT = process.env.PORT || 4000;
 
@@ -39,3 +39,5 @@ app.use((req: Request, res: Response) => {
 app.listen(PORT, () => {
     console.log(`talabaoasatiza Service is running on port ${PORT}`);
 });
+
+export default ServerlessHttp(app);
