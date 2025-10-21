@@ -1,12 +1,1 @@
-{
-  "version": 2,
-  "functions": {
-    "dist/index.mjs": {
-      "maxDuration": 10
-    }
-  },
-  "routes": [
-    { "src": "/public/(.*)", "dest": "/public/$1" },
-    { "src": "/(.*)", "dest": "/dist/index.mjs" }
-  ]
-}
+{ "version": 2 }

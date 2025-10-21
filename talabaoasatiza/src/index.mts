@@ -36,8 +36,9 @@ app.use((req: Request, res: Response) => {
     res.status(404).send("Route not found");
 });
 
-app.listen(PORT, () => {
+if (process.env.NODE_ENV === "development") {
+  app.listen(PORT, () => {
     console.log(`talabaoasatiza Service is running on port ${PORT}`);
-});
-
+  });
+}
 export default ServerlessHttp(app);
