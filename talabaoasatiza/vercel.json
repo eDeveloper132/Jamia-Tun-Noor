@@ -1,1 +1,25 @@
-{ "version": 2 }
+{
+  "version": 2,
+  "builds": [
+    {
+      "src": "dist/index.mjs",
+      "use": "@vercel/node",
+      "config": {
+        "includeFiles": [
+          "public/**",
+          "src/config/**",
+          "src/controllers/**",
+          "src/models/**",
+          "src/routes/**",
+          "src/utils/**"
+        ]
+      }
+    }
+  ],
+  "routes": [
+    {
+      "src": "/(.*)",
+      "dest": "dist/index.mjs"
+    }
+  ]
+}
