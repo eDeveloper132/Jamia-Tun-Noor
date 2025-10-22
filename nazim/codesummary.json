@@ -1,0 +1,121 @@
+{
+  "rootDirectory": "d:\\Jamia-Tun-Noor\\nazim",
+  "timestamp": "2025-10-22T13:15:34.849Z",
+  "files": [
+    {
+      "path": "index.d.mts",
+      "absolutePath": "d:\\Jamia-Tun-Noor\\nazim\\index.d.mts",
+      "name": "index.d.mts",
+      "extension": ".mts",
+      "size": 60,
+      "created": "2025-10-21T09:24:26.900Z",
+      "modified": "2025-10-21T09:48:46.963Z",
+      "content": "import \"dotenv/config\";\n//# sourceMappingURL=index.d.mts.map",
+      "lines": 2,
+      "isText": false
+    },
+    {
+      "path": "index.d.mts.map",
+      "absolutePath": "d:\\Jamia-Tun-Noor\\nazim\\index.d.mts.map",
+      "name": "index.d.mts.map",
+      "extension": ".map",
+      "size": 118,
+      "created": "2025-10-21T09:24:26.900Z",
+      "modified": "2025-10-21T09:48:46.963Z",
+      "content": "{\"version\":3,\"file\":\"index.d.mts\",\"sourceRoot\":\"\",\"sources\":[\"index.mts\"],\"names\":[],\"mappings\":\"AAAA,OAAO,eAAe,CAAC\"}",
+      "lines": 1,
+      "isText": false
+    },
+    {
+      "path": "index.mjs",
+      "absolutePath": "d:\\Jamia-Tun-Noor\\nazim\\index.mjs",
+      "name": "index.mjs",
+      "extension": ".mjs",
+      "size": 594,
+      "created": "2025-10-21T09:24:26.892Z",
+      "modified": "2025-10-21T09:48:46.954Z",
+      "content": "import \"dotenv/config\";\nimport path from \"path\";\nimport express from 'express';\nimport cors from 'cors';\nimport cookieParser from 'cookie-parser';\nconst app = express();\nconst PORT = process.env.PORT || 3000;\napp.use(cors());\napp.use(express.json());\napp.use(cookieParser());\napp.use(express.static(path.join('public')));\napp.get(\"/\", (req, res) => {\n    res.send(\"Nazim Service is running\");\n});\napp.use((req, res) => {\n    res.status(404).send(\"Route not found\");\n});\napp.listen(PORT, () => {\n    console.log(`Nazim Service is running on port ${PORT}`);\n});\n//# sourceMappingURL=index.mjs.map",
+      "lines": 21,
+      "isText": false
+    },
+    {
+      "path": "index.mjs.map",
+      "absolutePath": "d:\\Jamia-Tun-Noor\\nazim\\index.mjs.map",
+      "name": "index.mjs.map",
+      "extension": ".map",
+      "size": 969,
+      "created": "2025-10-21T09:24:26.883Z",
+      "modified": "2025-10-21T09:48:46.954Z",
+      "content": "{\"version\":3,\"file\":\"index.mjs\",\"sourceRoot\":\"\",\"sources\":[\"index.mts\"],\"names\":[],\"mappings\":\"AAAA,OAAO,eAAe,CAAC;AACvB,OAAO,IAAI,MAAM,MAAM,CAAC;AACxB,OAAO,OAAO,MAAM,SAAS,CAAC;AAC9B,OAAO,IAAI,MAAM,MAAM,CAAC;AAExB,OAAO,YAAY,MAAM,eAAe,CAAC;AACzC,MAAM,GAAG,GAAG,OAAO,EAAE,CAAC;AACtB,MAAM,IAAI,GAAG,OAAO,CAAC,GAAG,CAAC,IAAI,IAAI,IAAI,CAAC;AAEtC,GAAG,CAAC,GAAG,CAAC,IAAI,EAAE,CAAC,CAAC;AAChB,GAAG,CAAC,GAAG,CAAC,OAAO,CAAC,IAAI,EAAE,CAAC,CAAC;AACxB,GAAG,CAAC,GAAG,CAAC,YAAY,EAAE,CAAC,CAAC;AAExB,GAAG,CAAC,GAAG,CAAC,OAAO,CAAC,MAAM,CAAC,IAAI,CAAC,IAAI,CAAC,QAAQ,CAAC,CAAC,CAAC,CAAC;AAC7C,GAAG,CAAC,GAAG,CAAC,GAAG,EAAE,CAAC,GAAY,EAAE,GAAa,EAAE,EAAE;IACzC,GAAG,CAAC,IAAI,CAAC,0BAA0B,CAAC,CAAC;AACzC,CAAC,CAAC,CAAC;AAEH,GAAG,CAAC,GAAG,CAAC,CAAC,GAAY,EAAE,GAAa,EAAE,EAAE;IACpC,GAAG,CAAC,MAAM,CAAC,GAAG,CAAC,CAAC,IAAI,CAAC,iBAAiB,CAAC,CAAC;AAC5C,CAAC,CAAC,CAAC;AAEH,GAAG,CAAC,MAAM,CAAC,IAAI,EAAE,GAAG,EAAE;IAClB,OAAO,CAAC,GAAG,CAAC,oCAAoC,IAAI,EAAE,CAAC,CAAC;AAC5D,CAAC,CAAC,CAAC\"}",
+      "lines": 1,
+      "isText": false
+    },
+    {
+      "path": "index.mts",
+      "absolutePath": "d:\\Jamia-Tun-Noor\\nazim\\index.mts",
+      "name": "index.mts",
+      "extension": ".mts",
+      "size": 675,
+      "created": "2025-10-21T09:19:02.101Z",
+      "modified": "2025-10-21T09:48:36.206Z",
+      "content": "import \"dotenv/config\";\r\nimport path from \"path\";\r\nimport express from 'express';\r\nimport cors from 'cors';\r\nimport type { Request, Response } from 'express';\r\nimport cookieParser from 'cookie-parser';\r\nconst app = express();\r\nconst PORT = process.env.PORT || 3000;\r\n\r\napp.use(cors());\r\napp.use(express.json());\r\napp.use(cookieParser());\r\n\r\napp.use(express.static(path.join('public')));\r\napp.get(\"/\", (req: Request, res: Response) => {\r\n    res.send(\"Nazim Service is running\");\r\n});\r\n\r\napp.use((req: Request, res: Response) => {\r\n    res.status(404).send(\"Route not found\");\r\n});\r\n\r\napp.listen(PORT, () => {\r\n    console.log(`Nazim Service is running on port ${PORT}`);\r\n});",
+      "lines": 25,
+      "isText": false
+    },
+    {
+      "path": "package.json",
+      "absolutePath": "d:\\Jamia-Tun-Noor\\nazim\\package.json",
+      "name": "package.json",
+      "extension": ".json",
+      "size": 552,
+      "created": "2025-10-21T08:36:21.055Z",
+      "modified": "2025-10-21T09:31:06.083Z",
+      "content": "{\n  \"name\": \"nazim\",\n  \"version\": \"1.0.0\",\n  \"description\": \"\",\n  \"main\": \"index.mjs\",\n  \"scripts\": {\n    \"test\": \"echo \\\"Error: no test specified\\\" && exit 1\"\n  },\n  \"keywords\": [],\n  \"author\": \"\",\n  \"license\": \"ISC\",\n  \"type\": \"module\",\n  \"dependencies\": {\n    \"cookie-parser\": \"^1.4.7\",\n    \"cors\": \"^2.8.5\",\n    \"dotenv\": \"^17.2.3\",\n    \"express\": \"^5.1.0\",\n    \"mongoose\": \"^8.19.2\"\n  },\n  \"devDependencies\": {\n    \"@types/cookie-parser\": \"^1.4.9\",\n    \"@types/cors\": \"^2.8.19\",\n    \"@types/dotenv\": \"^6.1.1\",\n    \"@types/express\": \"^5.0.3\"\n  }\n}\n",
+      "lines": 27,
+      "isText": true
+    },
+    {
+      "path": "public\\index.html",
+      "absolutePath": "d:\\Jamia-Tun-Noor\\nazim\\public\\index.html",
+      "name": "index.html",
+      "extension": ".html",
+      "size": 248,
+      "created": "2025-10-21T09:48:12.146Z",
+      "modified": "2025-10-21T09:48:22.743Z",
+      "content": "<!DOCTYPE html>\r\n<html lang=\"en\">\r\n<head>\r\n    <meta charset=\"UTF-8\">\r\n    <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\r\n    <title>Document</title>\r\n</head>\r\n<body>\r\n    <h1>nazim Service is running</h1>\r\n</body>\r\n</html>",
+      "lines": 11,
+      "isText": true
+    },
+    {
+      "path": "tsconfig.json",
+      "absolutePath": "d:\\Jamia-Tun-Noor\\nazim\\tsconfig.json",
+      "name": "tsconfig.json",
+      "extension": ".json",
+      "size": 1164,
+      "created": "2025-10-21T08:36:25.851Z",
+      "modified": "2025-10-21T08:36:25.851Z",
+      "content": "{\r\n  // Visit https://aka.ms/tsconfig to read more about this file\r\n  \"compilerOptions\": {\r\n    // File Layout\r\n    // \"rootDir\": \"./src\",\r\n    // \"outDir\": \"./dist\",\r\n\r\n    // Environment Settings\r\n    // See also https://aka.ms/tsconfig/module\r\n    \"module\": \"nodenext\",\r\n    \"target\": \"esnext\",\r\n    \"types\": [],\r\n    // For nodejs:\r\n    // \"lib\": [\"esnext\"],\r\n    // \"types\": [\"node\"],\r\n    // and npm install -D @types/node\r\n\r\n    // Other Outputs\r\n    \"sourceMap\": true,\r\n    \"declaration\": true,\r\n    \"declarationMap\": true,\r\n\r\n    // Stricter Typechecking Options\r\n    \"noUncheckedIndexedAccess\": true,\r\n    \"exactOptionalPropertyTypes\": true,\r\n\r\n    // Style Options\r\n    // \"noImplicitReturns\": true,\r\n    // \"noImplicitOverride\": true,\r\n    // \"noUnusedLocals\": true,\r\n    // \"noUnusedParameters\": true,\r\n    // \"noFallthroughCasesInSwitch\": true,\r\n    // \"noPropertyAccessFromIndexSignature\": true,\r\n\r\n    // Recommended Options\r\n    \"strict\": true,\r\n    \"jsx\": \"react-jsx\",\r\n    \"verbatimModuleSyntax\": true,\r\n    \"isolatedModules\": true,\r\n    \"noUncheckedSideEffectImports\": true,\r\n    \"moduleDetection\": \"force\",\r\n    \"skipLibCheck\": true,\r\n  }\r\n}\r\n",
+      "lines": 45,
+      "isText": true
+    }
+  ],
+  "directories": [
+    {
+      "path": "public",
+      "absolutePath": "d:\\Jamia-Tun-Noor\\nazim\\public",
+      "name": "public"
+    }
+  ],
+  "summary": {
+    "totalFiles": 8,
+    "totalDirectories": 1,
+    "totalSize": 4380,
+    "fileTypes": {
+      ".mts": 2,
+      ".map": 2,
+      ".mjs": 1,
+      ".json": 2,
+      ".html": 1
+    }
+  }
+}
