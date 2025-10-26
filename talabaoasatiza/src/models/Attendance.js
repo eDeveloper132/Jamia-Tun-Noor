@@ -7,7 +7,7 @@ const AttendanceSchema = new mongoose.Schema({
     date: { type: String, required: true, index: true },
     entryTime: String,
     exitTime: String,
-    status: { type: String, enum: ["present", "absent", "leave", "late"], default: "present" },
+    status: { type: String, enum: ["present", "absent", "leave", "late", "not-entered"], default: "present" },
     markedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
     notes: String
 }, { timestamps: true });

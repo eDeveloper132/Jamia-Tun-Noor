@@ -1,19 +1,18 @@
 import type { Request, Response } from "express";
-import { AttendanceModel } from "../models/Attendance.js";
+import { AttendanceModel, type IAttendance } from "../models/Attendance.js";
 import { AuditLogModel } from "../models/AuditLog.js";
-import mongoose from "mongoose";
 
 export async function markAttendance(req: Request, res: Response) {
   try {
     const { userId, userRole, date, entryTime, exitTime, status, subject, className } = req.body;
     if (!userId || !userRole || !date) return res.status(400).json({ error: "Missing fields" });
-    const attendance = await AttendanceModel.create({
+    const attendance: IAttendance = await AttendanceModel.create({
       user: userId,
       userRole,
       date,
       entryTime,
       exitTime,
-      status: status || "present",
+      status: status || "not-entered",
       subject,
       className,
       markedBy: (req as any).user._id

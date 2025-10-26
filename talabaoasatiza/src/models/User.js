@@ -6,7 +6,9 @@ const UserSchema = new mongoose.Schema({
     role: { type: String, enum: ["student", "teacher", "nazim"], required: true },
     className: { type: String },
     subjects: [String],
-    isEmailVerified: { type: Boolean, default: false }
+    isEmailVerified: { type: Boolean, default: false },
+    isAdminApproved: { type: Boolean, default: false },
+    approvedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: false },
 }, { timestamps: true });
 export const UserModel = mongoose.model("User", UserSchema);
 //# sourceMappingURL=User.js.map

@@ -1,11 +1,11 @@
 import type { Request, Response } from "express";
-import { ExamModel } from "../models/Exam.js";
+import { ExamModel, type IExam } from "../models/Exam.js";
 
 export async function createExam(req: Request, res: Response) {
   try {
     const { title, subject, className, date, startTime, endTime } = req.body;
     if (!title || !className || !date) return res.status(400).json({ error: "Missing fields" });
-    const exam = await ExamModel.create({ title, subject, className, date, startTime, endTime, createdBy: (req as any).user._id });
+    const exam: IExam = await ExamModel.create({ title, subject, className, date, startTime, endTime, createdBy: (req as any).user._id });
     return res.json({ exam });
   } catch (err) {
     console.error(err);

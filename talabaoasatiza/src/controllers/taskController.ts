@@ -1,11 +1,11 @@
 import type { Request, Response } from "express";
-import { TaskModel } from "../models/Task.js";
+import { TaskModel, type ITask } from "../models/Task.js";
 
 export async function createTask(req: Request, res: Response) {
   try {
     const { title, description, subject, assignedTo, assignedDate, dueDate } = req.body;
     if (!title || !subject || !assignedTo || !assignedDate) return res.status(400).json({ error: "Missing fields" });
-    const task = await TaskModel.create({
+    const task: ITask = await TaskModel.create({
       title, description, subject, assignedTo, assignedBy: (req as any).user._id, assignedDate, dueDate
     });
     return res.json({ task });

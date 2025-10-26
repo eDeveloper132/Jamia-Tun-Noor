@@ -14,14 +14,14 @@ export async function listUsers(req, res) {
 }
 export async function createUser(req, res) {
     try {
-        const { email, password, name, role, className, subjects } = req.body;
+        const { email, password, name, role, className, subjects, approvedBy } = req.body;
         if (!email || !password || !name || !role)
             return res.status(400).json({ error: "Missing fields" });
         if (await UserModel.findOne({ email }))
             return res.status(400).json({ error: "Email exists" });
         const passwordHash = await hashPassword(password);
         const user = await UserModel.create({ email, passwordHash, name, role, className, subjects });
-        return res.json({ user: { id: user._id, email: user.email, name: user.name, role: user.role } });
+        return res.json({ user: { id: user._id, email: user.email, name: user.name, role: user.role, adminApproved: true, approvedBy } });
     }
     catch (err) {
         console.error(err);

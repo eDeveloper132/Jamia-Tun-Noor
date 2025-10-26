@@ -1,5 +1,5 @@
 import type { Request, Response } from "express";
-import { UserModel } from "../models/User.js";
+import { UserModel, type IUser } from "../models/User.js";
 import { hashPassword } from "../utils/hash.js";
 
 export async function listUsers(req: Request, res: Response) {
@@ -15,12 +15,12 @@ export async function listUsers(req: Request, res: Response) {
 
 export async function createUser(req: Request, res: Response) {
   try {
-    const { email, password, name, role, className, subjects } = req.body;
+    const { email, password, name, role, className, subjects, approvedBy } = req.body;
     if (!email || !password || !name || !role) return res.status(400).json({ error: "Missing fields" });
     if (await UserModel.findOne({ email })) return res.status(400).json({ error: "Email exists" });
     const passwordHash = await hashPassword(password);
-    const user = await UserModel.create({ email, passwordHash, name, role, className, subjects });
-    return res.json({ user: { id: user._id, email: user.email, name: user.name, role: user.role } });
+    const user: IUser = await UserModel.create({ email, passwordHash, name, role, className, subjects });
+    return res.json({ user: { id: user._id, email: user.email, name: user.name, role: user.role, adminApproved: true, approvedBy } });
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: "Server error" });

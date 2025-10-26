@@ -8,6 +8,8 @@ export interface IUser extends mongoose.Document {
     className?: string;
     subjects?: string[];
     isEmailVerified?: boolean;
+    isAdminApproved?: boolean;
+    approvedBy?: mongoose.Schema.Types.ObjectId;
     createdAt: Date;
     updatedAt: Date;
 }

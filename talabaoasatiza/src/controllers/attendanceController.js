@@ -1,6 +1,5 @@
 import { AttendanceModel } from "../models/Attendance.js";
 import { AuditLogModel } from "../models/AuditLog.js";
-import mongoose from "mongoose";
 export async function markAttendance(req, res) {
     try {
         const { userId, userRole, date, entryTime, exitTime, status, subject, className } = req.body;
@@ -12,7 +11,7 @@ export async function markAttendance(req, res) {
             date,
             entryTime,
             exitTime,
-            status: status || "present",
+            status: status || "not-entered",
             subject,
             className,
             markedBy: req.user._id
