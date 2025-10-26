@@ -29,7 +29,12 @@ app.use(express.static(path.join("public")));
 
 // --- Database Connection ---
 await connectToDatabase(); // Connect to the MongoDB database (using top-level await)
+// --- Server Start ---
 
+// Start the server and listen on the defined PORT
+app.listen(PORT, () => {
+    console.log(`talabaoasatiza Service is running on port ${PORT}`);
+});
 // --- Frontend/UI Routes (Serving HTML) ---
 
 // Protected Home Route: Requires authentication and specific roles to access
@@ -250,18 +255,3 @@ app.post('/forgot-password', async(req: Request, res: Response) => {
 app.use((req: Request, res: Response) => {
   res.status(404).send("Route not found");
 });
-
-// --- Server Start ---
-
-// Start the server and listen on the defined PORT
-// Start server locally only
-if (!process.env.VERCEL) {
-  app.listen(PORT, () => {
-    console.log(`talabaoasatiza Service is running on port ${PORT}`);
-  });
-}
-
-// Export a request handler for Vercel (explicit function forwarding)
-export default function handler(req: unknown, res: unknown) {
-  return (app as any)(req, res);
-}

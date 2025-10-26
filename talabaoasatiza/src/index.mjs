@@ -25,6 +25,11 @@ app.use(cookieParser()); // Middleware to parse and handle cookies
 app.use(express.static(path.join("public")));
 // --- Database Connection ---
 await connectToDatabase(); // Connect to the MongoDB database (using top-level await)
+// --- Server Start ---
+// Start the server and listen on the defined PORT
+app.listen(PORT, () => {
+    console.log(`talabaoasatiza Service is running on port ${PORT}`);
+});
 // --- Frontend/UI Routes (Serving HTML) ---
 // Protected Home Route: Requires authentication and specific roles to access
 app.get("/", requireAuth, requireRole(["student", "teacher"]), (req, res) => {
@@ -212,16 +217,4 @@ app.post('/forgot-password', async (req, res) => {
 app.use((req, res) => {
     res.status(404).send("Route not found");
 });
-// --- Server Start ---
-// Start the server and listen on the defined PORT
-// Start server locally only
-if (!process.env.VERCEL) {
-    app.listen(PORT, () => {
-        console.log(`talabaoasatiza Service is running on port ${PORT}`);
-    });
-}
-// Export a request handler for Vercel (explicit function forwarding)
-export default function handler(req, res) {
-    return app(req, res);
-}
 //# sourceMappingURL=index.mjs.map
