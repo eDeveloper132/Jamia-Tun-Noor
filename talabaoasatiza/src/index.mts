@@ -11,6 +11,8 @@ import userRoutes from "./routes/users.js"; // Import routes for user management
 import attendanceRoutes from "./routes/attendance.js"; // Import routes for attendance features
 import taskRoutes from "./routes/tasks.js"; // Import routes for tasks/assignments
 import examRoutes from "./routes/exams.js"; // Import routes for exams/tests
+import http from "http";
+import { Server } from "socket.io";
 import { requireAuth, requireRole } from "./utils/authMiddleware.js"; // Custom middleware for checking authentication and roles
 import { UserModel } from "./models/User.js"; // MongoDB User model
 import { hashPassword } from "./utils/hash.js"; // Utility function for password hashing
@@ -19,7 +21,13 @@ import { sendVerificationEmailTwo } from "./utils/mailer.js"; // Utility for sen
 
 const app = express(); // Initialize the Express application
 const PORT = process.env.PORT || 4000; // Define the port to run the server on
+const server = http.createServer(app);
+const io = new Server(server, {
+  cors: { origin: "*" },
+});
 
+// Global IO
+app.set("io", io);
 // --- Global Middleware Setup ---
 app.use(cors()); // Enable CORS for all incoming requests
 app.use(express.json()); // Middleware to parse incoming requests with JSON payloads
@@ -31,10 +39,6 @@ app.use(express.static(path.join("public")));
 await connectToDatabase(); // Connect to the MongoDB database (using top-level await)
 // --- Server Start ---
 
-// Start the server and listen on the defined PORT
-app.listen(PORT, () => {
-    console.log(`talabaoasatiza Service is running on port ${PORT}`);
-});
 // --- Frontend/UI Routes (Serving HTML) ---
 
 // Protected Home Route: Requires authentication and specific roles to access
@@ -254,4 +258,14 @@ app.post('/forgot-password', async(req: Request, res: Response) => {
 // Catch-all route for any request that didn't match an existing route (404 Not Found)
 app.use((req: Request, res: Response) => {
   res.status(404).send("Route not found");
+});
+
+io.on("connection", (socket) => {
+  console.log("🟢 Client connected:", socket.id);
+  // You can register socket events here if needed
+});
+
+// Start the server and listen on the defined PORT
+server.listen(PORT, () => {
+    console.log(`talabaoasatiza Service is running on 🚀 Server + Socket.IO Port ${PORT}`);
 });
