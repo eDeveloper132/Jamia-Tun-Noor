@@ -254,6 +254,10 @@ app.use((req: Request, res: Response) => {
 // --- Server Start ---
 
 // Start the server and listen on the defined PORT
-app.listen(PORT, () => {
-  console.log(`talabaoasatiza Service is running on port ${PORT}`);
-});
+if (!process.env.VERCEL) {
+  app.listen(PORT, () => {
+    console.log(`talabaoasatiza Service is running on port ${PORT}`);
+  });
+}
+
+export default (app as any);
