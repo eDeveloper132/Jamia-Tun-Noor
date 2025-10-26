@@ -6,8 +6,7 @@
       "use": "@vercel/node",
       "config": {
         "includeFiles": [
-          "public/auth/**",
-          "public/protected/**",
+          "public/**",
           "src/config/**",
           "src/controllers/**",
           "src/models/**",
