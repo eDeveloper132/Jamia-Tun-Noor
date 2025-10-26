@@ -1,9 +1,16 @@
+// ./src/utils/jwt.ts
 import jwt from "jsonwebtoken";
-const JWT_SECRET = (process.env.JWT_SECRET ?? "CHANGE_ME");
-const JWT_EXPIRES_IN = process.env.JWT_EXPIRES_IN ?? "1d"; // keep as string
+const JWT_SECRET = process.env.JWT_SECRET ?? "dev-secret";
+const RAW_EXPIRES_IN = process.env.JWT_EXPIRES_IN ?? "1d";
+function parseExpiresIn(value) {
+    if (/^\d+$/.test(value)) {
+        return Number(value);
+    }
+    return value;
+}
 export function signJwt(payload) {
-    const expiresIn = JWT_EXPIRES_IN ? Number(JWT_EXPIRES_IN) : undefined;
-    const options = expiresIn ? { expiresIn } : undefined;
+    const expiresIn = parseExpiresIn(RAW_EXPIRES_IN);
+    const options = { expiresIn }; // no error now
     return jwt.sign(payload, JWT_SECRET, options);
 }
 export function verifyJwt(token) {

@@ -5,14 +5,15 @@ import { signJwt } from "../utils/jwt.js";
 
 export async function registerController(req: Request, res: Response) {
   try {
-    const { email, password, name, role, className, subjects } = req.body;
+    const { email, password, name } = req.body;
+    const role: string = "student";
     if (!email || !password || !name || !role) return res.status(400).json({ error: "Missing fields" });
     const existing = await UserModel.findOne({ email });
     if (existing) return res.status(400).json({ error: "Email already exists" });
     const passwordHash = await hashPassword(password);
-    const user: IUser = await UserModel.create({ email, passwordHash, name, role, className, subjects });
+    const user: IUser = await UserModel.create({ email, passwordHash, name, role });
     // const token = signJwt({ userId: user._id });
-    return res.json({ user: { id: user._id, email: user.email, name: user.name, role: user.role, className: user.className }});
+    return res.json({ user: { id: user._id, email: user.email, name: user.name, role: user.role }});
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: "Server error" });
@@ -37,7 +38,8 @@ export async function loginController(req: Request, res: Response) {
     const ok = await comparePassword(password, user.passwordHash);
     if (!ok) return res.status(400).json({ error: "Invalid credentials" });
     const token = signJwt({ userId: user._id });
-    return res.json({ user: { id: user._id, email: user.email, name: user.name, role: user.role, className: user.className }, token });
+    res.json({ user: { id: user._id, email: user.email, name: user.name, role: user.role, className: user.className }, token });
+    return res.redirect("/");
   } catch (err) {
     console.error(err);
     return res.status(500).json({ error: "Server error" });

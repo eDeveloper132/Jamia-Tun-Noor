@@ -12,6 +12,11 @@ export interface IUser extends mongoose.Document {
   isEmailVerified?: boolean;
   isAdminApproved?: boolean;
   approvedBy?: mongoose.Schema.Types.ObjectId;
+  forgotPassword?: boolean;
+  forgotPasswordToken?: string | null;
+  forgotPasswordExpiry?: Date | null;
+  verificationToken?: string | null;
+  verificationTokenExpiry?: Date | null;
   createdAt: Date;
   updatedAt: Date;
 }
@@ -26,6 +31,11 @@ const UserSchema = new mongoose.Schema<IUser>({
   isEmailVerified: { type: Boolean, default: false },
   isAdminApproved: { type: Boolean, default: false },
   approvedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User" , required: false },
+  forgotPassword: { type: Boolean, default: false },
+  forgotPasswordToken: { type: String, default: null },
+  forgotPasswordExpiry: { type: Date, default: null },
+  verificationToken: { type: String, default: null },
+  verificationTokenExpiry: { type: Date, default: null },
 }, { timestamps: true });
 
 export const UserModel = mongoose.model<IUser>("User", UserSchema);

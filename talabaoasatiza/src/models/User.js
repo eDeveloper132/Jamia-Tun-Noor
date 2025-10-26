@@ -9,6 +9,11 @@ const UserSchema = new mongoose.Schema({
     isEmailVerified: { type: Boolean, default: false },
     isAdminApproved: { type: Boolean, default: false },
     approvedBy: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: false },
+    forgotPassword: { type: Boolean, default: false },
+    forgotPasswordToken: { type: String, default: null },
+    forgotPasswordExpiry: { type: Date, default: null },
+    verificationToken: { type: String, default: null },
+    verificationTokenExpiry: { type: Date, default: null },
 }, { timestamps: true });
 export const UserModel = mongoose.model("User", UserSchema);
 //# sourceMappingURL=User.js.map

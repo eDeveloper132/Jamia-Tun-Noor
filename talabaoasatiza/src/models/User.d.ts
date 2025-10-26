@@ -10,6 +10,11 @@ export interface IUser extends mongoose.Document {
     isEmailVerified?: boolean;
     isAdminApproved?: boolean;
     approvedBy?: mongoose.Schema.Types.ObjectId;
+    forgotPassword?: boolean;
+    forgotPasswordToken?: string | null;
+    forgotPasswordExpiry?: Date | null;
+    verificationToken?: string | null;
+    verificationTokenExpiry?: Date | null;
     createdAt: Date;
     updatedAt: Date;
 }
