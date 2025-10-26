@@ -1,4 +1,3 @@
 import "dotenv/config";
-declare const _default: any;
-export default _default;
+export default function handler(req: unknown, res: unknown): any;
 //# sourceMappingURL=index.d.mts.map

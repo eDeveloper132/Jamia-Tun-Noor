@@ -254,10 +254,14 @@ app.use((req: Request, res: Response) => {
 // --- Server Start ---
 
 // Start the server and listen on the defined PORT
+// Start server locally only
 if (!process.env.VERCEL) {
   app.listen(PORT, () => {
     console.log(`talabaoasatiza Service is running on port ${PORT}`);
   });
 }
 
-export default (app as any);
+// Export a request handler for Vercel (explicit function forwarding)
+export default function handler(req: unknown, res: unknown) {
+  return (app as any)(req, res);
+}

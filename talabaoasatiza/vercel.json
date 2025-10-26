@@ -23,7 +23,7 @@
       "dest": "src/index.mjs"
     },
     {
-      "src": "^/(login|signup|logout|forgot-password|verify-email|verify-email-two|invoice-management|booking-management|hkeep-room|hkeep-maintenance|hkeep-tasks|recept-rooms|recept-invoices|recept-tasks|recept-bookings|recept-issue)$",
+      "src": "^/(login|signup|logout|forgot-password|verify-email|verify-email-two)$",
       "dest": "src/index.mjs"
     },
     {
