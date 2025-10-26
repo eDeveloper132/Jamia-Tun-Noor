@@ -33,7 +33,7 @@ app.get("/", requireAuth, requireRole(["student", "teacher"]), (req: Request, re
     return res.sendFile(path.resolve("public", "protected", "index.html"));
   }
 );
-
+app.use(express.static(path.join("public")));
 // Routes (API)
 app.get("/login", (req: Request, res: Response) => {
   res.sendFile(path.resolve("public", "auth", "signin.html"));
@@ -45,6 +45,10 @@ app.get("/logout", (req: Request, res: Response) => {
   res.clearCookie("token"); // use 'token' if that's what you set at login
   return res.status(200).json({ message: "Logged out successfully" });
 });
+
+app.get('/forgot-password', (req: Request, res: Response) => {
+  res.sendFile(path.resolve("public", "auth", "reset-password.html"));
+})
 
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
@@ -184,9 +188,6 @@ app.post('/reset-password', async (req: Request, res: Response) => {
     res.status(500).json({ message: 'Server error. Try later.' });
   }
 });
-app.get('/forgot-password', (req: Request, res: Response) => {
-  res.sendFile(path.resolve("public", "auth", "reset-password.html"));
-})
 app.post('/forgot-password', async(req: Request, res: Response) => {
   const { email } = req.body;
   if (!email) {

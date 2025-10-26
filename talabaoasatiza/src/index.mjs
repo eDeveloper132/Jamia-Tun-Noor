@@ -27,6 +27,7 @@ await connectToDatabase();
 app.get("/", requireAuth, requireRole(["student", "teacher"]), (req, res) => {
     return res.sendFile(path.resolve("public", "protected", "index.html"));
 });
+app.use(express.static(path.join("public")));
 // Routes (API)
 app.get("/login", (req, res) => {
     res.sendFile(path.resolve("public", "auth", "signin.html"));
@@ -37,6 +38,9 @@ app.get("/signup", (req, res) => {
 app.get("/logout", (req, res) => {
     res.clearCookie("token"); // use 'token' if that's what you set at login
     return res.status(200).json({ message: "Logged out successfully" });
+});
+app.get('/forgot-password', (req, res) => {
+    res.sendFile(path.resolve("public", "auth", "reset-password.html"));
 });
 app.use("/api/auth", authRoutes);
 app.use("/api/users", userRoutes);
@@ -162,9 +166,6 @@ app.post('/reset-password', async (req, res) => {
         console.error('Reset error:', error);
         res.status(500).json({ message: 'Server error. Try later.' });
     }
-});
-app.get('/forgot-password', (req, res) => {
-    res.sendFile(path.resolve("public", "auth", "reset-password.html"));
 });
 app.post('/forgot-password', async (req, res) => {
     const { email } = req.body;
