@@ -53,7 +53,7 @@ app.use("/api/tasks", taskRoutes);
 app.use("/api/exams", examRoutes);
 
 
-app.get('/verify-email', async (req, res) => {
+app.get('/verify-email', async (req: Request, res: Response) => {
   const { token } = req.query;
 
   if (!token) {
@@ -112,7 +112,7 @@ app.get('/verify-email', async (req, res) => {
     `);
   }
 });
-app.get('/verify-email-two', async (req, res) => {
+app.get('/verify-email-two', async (req: Request, res:Response) => {
   const { token } = req.query;
   if (!token) {
     return res.status(400).send("Error: Token is required");
@@ -155,7 +155,7 @@ app.get('/verify-email-two', async (req, res) => {
     res.status(500).send(/* … */);
   }
 });
-app.post('/reset-password', async (req, res) => {
+app.post('/reset-password', async (req: Request, res: Response) => {
   const { email, newPassword } = req.body;
   if (!email || !newPassword) {
     return res.status(400).json({ message: 'All fields are required.' });
@@ -184,10 +184,10 @@ app.post('/reset-password', async (req, res) => {
     res.status(500).json({ message: 'Server error. Try later.' });
   }
 });
-app.get('/forgot-password', (req, res) => {
-  res.sendFile(path.resolve('public', 'auth', 'reset-password.html'));
+app.get('/forgot-password', (req: Request, res: Response) => {
+  res.sendFile(path.resolve("public", "auth", "reset-password.html"));
 })
-app.post('/forgot-password', async(req, res) => {
+app.post('/forgot-password', async(req: Request, res: Response) => {
   const { email } = req.body;
   if (!email) {
     return res.status(400).json({ message: 'Email is required.' });

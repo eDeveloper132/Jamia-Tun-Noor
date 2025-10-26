@@ -164,7 +164,7 @@ app.post('/reset-password', async (req, res) => {
     }
 });
 app.get('/forgot-password', (req, res) => {
-    res.sendFile(path.resolve('public', 'auth', 'reset-password.html'));
+    res.sendFile(path.resolve("public", "auth", "reset-password.html"));
 });
 app.post('/forgot-password', async (req, res) => {
     const { email } = req.body;

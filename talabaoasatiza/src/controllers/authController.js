@@ -1,6 +1,8 @@
 import { UserModel } from "../models/User.js";
 import { hashPassword, comparePassword } from "../utils/hash.js";
 import { signJwt } from "../utils/jwt.js";
+import { sendVerificationEmail } from "../utils/mailer.js";
+import { v4 as uuidv4 } from "uuid";
 export async function registerController(req, res) {
     try {
         const { email, password, name } = req.body;
@@ -11,13 +13,18 @@ export async function registerController(req, res) {
         if (existing)
             return res.status(400).json({ error: "Email already exists" });
         const passwordHash = await hashPassword(password);
-        const user = await UserModel.create({ email, passwordHash, name, role });
+        const token = uuidv4();
+        const hashedToken = await hashPassword(token);
+        const user = await UserModel.create({ email, passwordHash, name, role, verificationToken: hashedToken, verificationTokenExpiry: new Date(Date.now() + 3600000) });
+        console.log('🆕 User registered', user);
+        await sendVerificationEmail(email, hashedToken);
+        console.log("A verification link has been sent to the user's email.");
         // const token = signJwt({ userId: user._id });
-        return res.json({ user: { id: user._id, email: user.email, name: user.name, role: user.role } });
+        return res.status(201).json({ message: 'Registration successful, Verification email sent' });
     }
     catch (err) {
-        console.error(err);
-        return res.status(500).json({ error: "Server error" });
+        console.error('❌ Registration error:', err);
+        return res.status(500).json({ message: 'Internal server error' });
     }
 }
 export async function loginController(req, res) {
@@ -40,13 +47,37 @@ export async function loginController(req, res) {
         const ok = await comparePassword(password, user.passwordHash);
         if (!ok)
             return res.status(400).json({ error: "Invalid credentials" });
+        // const id = user._id;
+        // const namee = user.name;
+        // const emaile = user.email;
+        // const role = user.role;
+        // res.cookie(
+        //   'user',
+        //   JSON.stringify({ id, namee, emaile, role }),  // <-- note the _id
+        //   {
+        //     httpOnly: false,
+        //     secure: process.env.NODE_ENV === 'production',
+        //     sameSite: 'lax',
+        //     maxAge: 1000 * 60 * 60 * 24 * 7,
+        //     path: '/',
+        //   }
+        // )
         const token = signJwt({ userId: user._id });
-        res.json({ user: { id: user._id, email: user.email, name: user.name, role: user.role, className: user.className }, token });
-        return res.redirect("/");
+        console.log("Token Found In Login Controller:", token);
+        res.cookie("token", token, {
+            httpOnly: true,
+            secure: process.env.NODE_ENV === "production",
+            sameSite: "lax", // adjust as needed
+            maxAge: 24 * 60 * 60 * 1000, // 1 day (match JWT_EXPIRES_IN)
+            path: "/",
+        });
+        const safeUser = user.toObject();
+        delete safeUser.passwordHash;
+        return res.status(200).json({ token, user: safeUser });
     }
     catch (err) {
-        console.error(err);
-        return res.status(500).json({ error: "Server error" });
+        console.error('❌ Login error:', err);
+        return res.status(500).json({ message: 'Internal server error' });
     }
 }
 export async function adminLoginController(req, res) {

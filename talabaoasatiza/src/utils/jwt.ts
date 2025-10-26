@@ -12,7 +12,7 @@ function parseExpiresIn(value: string): NonNullable<SignOptions["expiresIn"]> {
   return value as unknown as NonNullable<SignOptions["expiresIn"]>;
 }
 
-export function signJwt(payload: object) {
+export function signJwt(payload: object): string {
   const expiresIn = parseExpiresIn(RAW_EXPIRES_IN);
   const options: SignOptions = { expiresIn }; // no error now
   return jwt.sign(payload, JWT_SECRET, options);
