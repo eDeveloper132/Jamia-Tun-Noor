@@ -22,7 +22,7 @@ app.use(express.json());
 app.use(cookieParser());
 await connectToDatabase();
 // If you want to expose static assets but NOT at root, mount them under /public:
-app.use(express.static(path.join("public")));
+// app.use(express.static(path.join("public")));
 // --- Protected root route: middleware(s) + handler
 app.get("/", requireAuth, requireRole(["student", "teacher"]), (req, res) => {
     return res.sendFile(path.resolve("public", "protected", "index.html"));
