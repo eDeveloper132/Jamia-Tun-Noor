@@ -21,18 +21,18 @@ app.use(cors());
 app.use(express.json());
 app.use(cookieParser());
 await connectToDatabase();
+// If you want to expose static assets but NOT at root, mount them under /public:
+app.use(express.static(path.join("public")));
 // --- Protected root route: middleware(s) + handler
 app.get("/", requireAuth, requireRole(["student", "teacher"]), (req, res) => {
     return res.sendFile(path.resolve("public", "protected", "index.html"));
 });
-// If you want to expose static assets but NOT at root, mount them under /public:
-app.use("/public", express.static(path.join("public")));
 // Routes (API)
 app.get("/login", (req, res) => {
-    res.sendFile(path.resolve("auth", "signin.html"));
+    res.sendFile(path.resolve("public", "auth", "signin.html"));
 });
 app.get("/signup", (req, res) => {
-    res.sendFile(path.resolve("auth", "signup.html"));
+    res.sendFile(path.resolve("public", "auth", "signup.html"));
 });
 app.get("/logout", (req, res) => {
     res.clearCookie("token"); // use 'token' if that's what you set at login
