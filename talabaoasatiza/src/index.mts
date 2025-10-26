@@ -42,7 +42,7 @@ await connectToDatabase(); // Connect to the MongoDB database (using top-level a
 // --- Frontend/UI Routes (Serving HTML) ---
 
 // Protected Home Route: Requires authentication and specific roles to access
-app.get("/", requireAuth, requireRole(["student", "teacher"]), (req: Request, res: Response) => {
+app.get("/", (req: Request, res: Response) => {
     return res.sendFile(path.resolve("public", "protected", "index.html")); // Serve the protected main page
   }
 );
