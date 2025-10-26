@@ -36,10 +36,10 @@ app.use("/public", express.static(path.join("public")));
 
 // Routes (API)
 app.get("/login", (req: Request, res: Response) => {
-  res.sendFile(path.resolve("public", "auth", "signin.html"));
+  res.sendFile(path.resolve("auth", "signin.html"));
 });
 app.get("/signup", (req: Request, res: Response) => {
-  res.sendFile(path.resolve("public", "auth", "signup.html"));
+  res.sendFile(path.resolve("auth", "signup.html"));
 });
 app.get("/logout", (req: Request, res: Response) => {
   res.clearCookie("token"); // use 'token' if that's what you set at login

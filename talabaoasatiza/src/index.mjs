@@ -29,10 +29,10 @@ app.get("/", requireAuth, requireRole(["student", "teacher"]), (req, res) => {
 app.use("/public", express.static(path.join("public")));
 // Routes (API)
 app.get("/login", (req, res) => {
-    res.sendFile(path.resolve("public", "auth", "signin.html"));
+    res.sendFile(path.resolve("auth", "signin.html"));
 });
 app.get("/signup", (req, res) => {
-    res.sendFile(path.resolve("public", "auth", "signup.html"));
+    res.sendFile(path.resolve("auth", "signup.html"));
 });
 app.get("/logout", (req, res) => {
     res.clearCookie("token"); // use 'token' if that's what you set at login
