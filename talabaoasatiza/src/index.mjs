@@ -4,12 +4,6 @@ import path from "path"; // Core module for working with file and directory path
 import express from "express"; // The main Express application framework
 import cors from "cors"; // Middleware to enable Cross-Origin Resource Sharing (CORS)
 import cookieParser from "cookie-parser"; // Middleware to parse cookies attached to the client request
-import connectToDatabase from "./config/db/db.js"; // Function to establish MongoDB connection
-import authRoutes from "./routes/auth.js"; // Import routes for authentication (login/signup)
-import userRoutes from "./routes/users.js"; // Import routes for user management
-import attendanceRoutes from "./routes/attendance.js"; // Import routes for attendance features
-import taskRoutes from "./routes/tasks.js"; // Import routes for tasks/assignments
-import examRoutes from "./routes/exams.js"; // Import routes for exams/tests
 import http from "http";
 import { Server } from "socket.io";
 import { requireAuth, requireRole } from "./utils/authMiddleware.js"; // Custom middleware for checking authentication and roles
@@ -31,12 +25,13 @@ app.use(express.json()); // Middleware to parse incoming requests with JSON payl
 app.use(cookieParser()); // Middleware to parse and handle cookies
 // Serve static assets (CSS, client-side JS, images) from the 'public' directory
 app.use(express.static(path.join("public")));
+import connectToDatabase from "./config/db/db.js"; // Function to establish MongoDB connection
 // --- Database Connection ---
 await connectToDatabase(); // Connect to the MongoDB database (using top-level await)
 // --- Server Start ---
 // --- Frontend/UI Routes (Serving HTML) ---
 // Protected Home Route: Requires authentication and specific roles to access
-app.get("/", (req, res) => {
+app.get("/", requireAuth, requireRole(["student", "teacher"]), (req, res) => {
     return res.sendFile(path.resolve("public", "protected", "index.html")); // Serve the protected main page
 });
 // Route to serve the login HTML page
@@ -56,6 +51,11 @@ app.get("/logout", (req, res) => {
 app.get('/forgot-password', (req, res) => {
     res.sendFile(path.resolve("public", "auth", "reset-password.html"));
 });
+import authRoutes from "./routes/auth.js"; // Import routes for authentication (login/signup)
+import userRoutes from "./routes/users.js"; // Import routes for user management
+import attendanceRoutes from "./routes/attendance.js"; // Import routes for attendance features
+import taskRoutes from "./routes/tasks.js"; // Import routes for tasks/assignments
+import examRoutes from "./routes/exams.js"; // Import routes for exams/tests
 // --- API Router Mounting ---
 app.use("/api/auth", authRoutes); // Mount authentication-related API routes
 app.use("/api/users", userRoutes); // Mount user management API routes
