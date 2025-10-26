@@ -25,7 +25,8 @@ app.use(cors()); // Enable CORS for all incoming requests
 app.use(express.json()); // Middleware to parse incoming requests with JSON payloads
 app.use(cookieParser()); // Middleware to parse and handle cookies
 // Serve static assets (CSS, client-side JS, images) from the 'public' directory
-app.use(express.static("public"));
+app.use(express.static(path.join("public")));
+
 // --- Database Connection ---
 await connectToDatabase(); // Connect to the MongoDB database (using top-level await)
 

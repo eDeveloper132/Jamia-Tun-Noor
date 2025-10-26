@@ -11,12 +11,21 @@
           "src/controllers/**",
           "src/models/**",
           "src/routes/**",
-          "src/utils/**"
+          "src/utils/**",
+          "src/seed/**"
         ]
       }
     }
   ],
   "routes": [
+    {
+      "src": "/api/(.*)",
+      "dest": "src/index.mjs"
+    },
+    {
+      "src": "^/(login|signup|logout|forgot-password|verify-email|verify-email-two|invoice-management|booking-management|hkeep-room|hkeep-maintenance|hkeep-tasks|recept-rooms|recept-invoices|recept-tasks|recept-bookings|recept-issue)$",
+      "dest": "src/index.mjs"
+    },
     {
       "src": "/(.*)",
       "dest": "src/index.mjs"
