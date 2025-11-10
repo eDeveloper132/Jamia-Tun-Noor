@@ -2,9 +2,9 @@
   "name": "talabaoasatiza",
   "version": "1.0.0",
   "description": "Teacher & Student portal (Express + TypeScript + MongoDB + JWT + Nodemailer)",
-  "main": "./src/index.mjs",
+  "main": "./dist/index.mjs",
   "scripts": {
-    "start": "tsc && node ./src/index.mjs",
+    "start": "tsc && node ./dist/index.mjs",
     "seed": "ts-node --esm ./src/seed/seed.ts",
     "seed:full": "node ./src/seed/fullSeed.js"
   },

@@ -2,33 +2,22 @@
   "version": 2,
   "builds": [
     {
-      "src": "src/index.mjs",
-      "use": "@vercel/node",
-      "config": {
-        "includeFiles": [
-          "public/**",
-          "src/config/**",
-          "src/controllers/**",
-          "src/models/**",
-          "src/routes/**",
-          "src/utils/**",
-          "src/seed/**"
-        ]
-      }
+      "src": "dist/index.mjs",
+      "use": "@vercel/node"
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "src/index.mjs"
+      "dest": "dist/index.mjs"
     },
     {
       "src": "^/(login|signup|logout|forgot-password|verify-email|verify-email-two)$",
-      "dest": "src/index.mjs"
+      "dest": "dist/index.mjs"
     },
     {
       "src": "/(.*)",
-      "dest": "src/index.mjs"
+      "dest": "dist/index.mjs"
     }
   ]
 }
