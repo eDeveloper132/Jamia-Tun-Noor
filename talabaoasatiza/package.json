@@ -4,8 +4,8 @@
   "description": "Teacher & Student portal (Express + TypeScript + MongoDB + JWT + Nodemailer)",
   "main": "./dist/index.mjs",
   "scripts": {
-    "start": "tsc && node ./dist/index.mjs",
-    "build": "tsc",
+    "start": "tsc && node ./src/index.mjs",
+    "build": "tsc && xcopy public dist\\public /E /I",
     "seed": "ts-node --esm ./src/seed/seed.ts",
     "seed:full": "node ./src/seed/fullSeed.js"
   },
