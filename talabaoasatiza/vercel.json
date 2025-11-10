@@ -2,14 +2,11 @@
   "version": 2,
   "builds": [
     {
-      "src": "dist/index.mjs",
-      "use": "@vercel/node"
-    },
-    {
-      "src": "public/**",
-      "use": "@vercel/static",
+      "src": "package.json",
+      "use": "@vercel/node",
       "config": {
-        "distDir": "public"
+        "installCommand": "npm install",
+        "buildCommand": "npm run build"
       }
     }
   ],
@@ -20,7 +17,7 @@
     },
     {
       "src": "/(.*)",
-      "dest": "/public/$1"
+      "dest": "dist/public/$1"
     }
   ]
 }
