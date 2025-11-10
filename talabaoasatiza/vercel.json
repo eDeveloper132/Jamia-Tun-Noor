@@ -2,22 +2,33 @@
   "version": 2,
   "builds": [
     {
-      "src": "package.json",
+      "src": "src/index.mjs",
       "use": "@vercel/node",
       "config": {
-        "installCommand": "npm install",
-        "buildCommand": "npm run build"
+        "includeFiles": [
+          "public/**",
+          "src/config/**",
+          "src/controllers/**",
+          "src/models/**",
+          "src/routes/**",
+          "src/utils/**",
+          "src/seed/**"
+        ]
       }
     }
   ],
   "routes": [
     {
       "src": "/api/(.*)",
-      "dest": "dist/index.mjs"
+      "dest": "src/index.mjs"
+    },
+    {
+      "src": "^/(login|signup|logout|forgot-password|verify-email|verify-email-two)$",
+      "dest": "src/index.mjs"
     },
     {
       "src": "/(.*)",
-      "dest": "dist/public/$1"
+      "dest": "src/index.mjs"
     }
   ]
 }
