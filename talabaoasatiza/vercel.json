@@ -4,6 +4,10 @@
     {
       "src": "dist/index.mjs",
       "use": "@vercel/node"
+    },
+    {
+      "src": "public/**",
+      "use": "@vercel/static"
     }
   ],
   "routes": [
@@ -12,12 +16,8 @@
       "dest": "dist/index.mjs"
     },
     {
-      "src": "^/(login|signup|logout|forgot-password|verify-email|verify-email-two)$",
-      "dest": "dist/index.mjs"
-    },
-    {
       "src": "/(.*)",
-      "dest": "dist/index.mjs"
+      "dest": "/public/$1"
     }
   ]
 }
