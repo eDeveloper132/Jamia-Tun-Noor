@@ -12,6 +12,7 @@ import taskRoutes from "./routes/tasks.js"; // Import routes for tasks/assignmen
 import examRoutes from "./routes/exams.js"; // Import routes for exams/tests
 import http from "http";
 import { Server } from "socket.io";
+import serverless from "serverless-http";
 import { requireAuth, requireRole } from "./utils/authMiddleware.js"; // Custom middleware for checking authentication and roles
 import { UserModel } from "./models/User.js"; // MongoDB User model
 import { hashPassword } from "./utils/hash.js"; // Utility function for password hashing
@@ -19,12 +20,26 @@ import { v4 as uuidv4 } from "uuid"; // Utility for generating UUIDs (used for t
 import { sendVerificationEmailTwo } from "./utils/mailer.js"; // Utility for sending emails (specifically for password reset flow)
 const app = express(); // Initialize the Express application
 const PORT = process.env.PORT || 4000; // Define the port to run the server on
-const server = http.createServer(app);
-const io = new Server(server, {
-    cors: { origin: "*" },
-});
+const isVercel = Boolean(process.env.VERCEL);
+let server;
+let io;
+if (!isVercel) {
+    server = http.createServer(app);
+    io = new Server(server, {
+        cors: { origin: "*" },
+    });
+    app.set("io", io);
+}
+else {
+    const noop = () => { };
+    const stubIo = {
+        emit: noop,
+        to: () => ({ emit: noop }),
+        on: noop,
+    };
+    app.set("io", stubIo);
+}
 // Global IO
-app.set("io", io);
 // --- Global Middleware Setup ---
 app.use(cors()); // Enable CORS for all incoming requests
 app.use(express.json()); // Middleware to parse incoming requests with JSON payloads
@@ -217,17 +232,22 @@ app.post('/forgot-password', async (req, res) => {
     return res.status(200).json({ message: 'Password reset email sent.' });
 });
 // --- Fallback / Error Handling ---
-io.on("connection", (socket) => {
-    console.log("🟢 Client connected:", socket.id);
-    // You can register socket events here if needed
-});
+if (!isVercel && io) {
+    io.on("connection", (socket) => {
+        console.log("🟢 Client connected:", socket.id);
+        // You can register socket events here if needed
+    });
+}
 // Catch-all route for any request that didn't match an existing route (404 Not Found)
 app.use((req, res) => {
     res.status(404).send("Route not found");
 });
 // Start the server and listen on the defined PORT
-server.listen(PORT, () => {
-    console.log(`talabaoasatiza Service is running on 🚀 Server + Socket.IO Port ${PORT}`);
-});
-export default server;
+if (!isVercel && server) {
+    server.listen(PORT, () => {
+        console.log(`talabaoasatiza Service is running on 🚀 Server + Socket.IO Port ${PORT}`);
+    });
+}
+const handler = serverless(app);
+export default isVercel ? handler : server;
 //# sourceMappingURL=index.mjs.map
