@@ -9,15 +9,5 @@
         "buildCommand": "npm run build"
       }
     }
-  ],
-  "routes": [
-    {
-      "src": "/api/(.*)",
-      "dest": "dist/index.mjs"
-    },
-    {
-      "src": "/(.*)",
-      "dest": "dist/public/$1"
-    }
   ]
 }
