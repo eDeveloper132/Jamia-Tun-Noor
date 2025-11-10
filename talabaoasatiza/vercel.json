@@ -1,13 +1,12 @@
 {
   "version": 2,
   "builds": [
-    {
-      "src": "package.json",
-      "use": "@vercel/node",
-      "config": {
-        "installCommand": "npm install",
-        "buildCommand": "npm run build"
-      }
-    }
+    { "src": "public/**", "use": "@vercel/static" },
+    { "src": "dist/index.mjs", "use": "@vercel/node" }
+  ],
+  "routes": [
+    { "src": "/static/(.*)", "dest": "/public/$1" },
+    { "src": "/api/(.*)", "dest": "dist/index.mjs" },
+    { "src": "/(.*)", "dest": "dist/index.mjs" }
   ]
 }
