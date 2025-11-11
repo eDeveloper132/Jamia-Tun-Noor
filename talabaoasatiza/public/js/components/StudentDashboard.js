@@ -19,6 +19,18 @@ async function fetchAttendance(studentId) {
     const response = await fetch(`/api/attendance/user/${studentId}`);
     return await response.json();
 }
+async function fetchClasses() {
+    const response = await fetch(`/api/classes`);
+    const data = await response.json();
+    return data.classes;
+}
+async function updateUserClass(studentId, className) {
+    await fetch(`/api/users/${studentId}/class`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ className }),
+    });
+}
 async function updateTaskStatus(taskId, status) {
     await fetch(`/api/tasks/${taskId}/status`, {
         method: 'PATCH',
@@ -81,16 +93,59 @@ function renderAttendance(attendance) {
     `;
 }
 export function renderStudentDashboard() {
-    const studentId = getStudentId();
     const userStr = localStorage.getItem('user');
     if (!userStr) {
         return '<p>Error: Student not logged in.</p>';
     }
-    const user = JSON.parse(userStr);
+    let user = JSON.parse(userStr);
+    const studentId = user?._id;
     if (!studentId) {
         return '<p>Error: Student not logged in.</p>';
     }
-    // Initial render with loading states
+    if (!user.className) {
+        // If no class is selected, show a class selection interface
+        setTimeout(async () => {
+            const classes = await fetchClasses();
+            const classSelectContainer = document.getElementById('class-select-container');
+            if (classSelectContainer) {
+                classSelectContainer.innerHTML = `
+                    <div class="bg-white p-6 rounded-lg shadow-md">
+                        <h2 class="text-2xl font-bold mb-4">Select Your Class</h2>
+                        <select id="class-selector" class="block w-full p-2 border border-gray-300 rounded-md mb-4">
+                            <option value="">-- Please select a class --</option>
+                            ${classes.map(cls => `<option value="${cls.name}">${cls.name}</option>`).join('')}
+                        </select>
+                        <button id="save-class-selection" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Save Class</button>
+                    </div>
+                `;
+                document.getElementById('save-class-selection')?.addEventListener('click', async () => {
+                    const selectedClass = document.getElementById('class-selector').value;
+                    if (selectedClass) {
+                        user.className = selectedClass;
+                        localStorage.setItem('user', JSON.stringify(user));
+                        // TODO: Send update to backend to persist className
+                        await updateUserClass(studentId, selectedClass);
+                        // Re-render the dashboard after class selection
+                        const appRoot = document.getElementById('app-root');
+                        if (appRoot) {
+                            appRoot.innerHTML = renderStudentDashboard();
+                        }
+                    }
+                    else {
+                        alert('Please select a class.');
+                    }
+                });
+            }
+        }, 0);
+        return `
+            <div class="container mx-auto p-4">
+                <div id="class-select-container">
+                    <p>Loading classes...</p>
+                </div>
+            </div>
+        `;
+    }
+    // Initial render with loading states for the actual dashboard
     setTimeout(async () => {
         const tasks = await fetchTasks(studentId);
         const exams = await fetchExams(user.className);

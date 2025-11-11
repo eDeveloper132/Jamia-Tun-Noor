@@ -51,3 +51,41 @@ export async function updateUser(req: Request, res: Response) {
 
   return res.json({ user });
 }
+
+export const deleteUser = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    await UserModel.findByIdAndDelete(id);
+    res.status(200).json({ message: 'User deleted successfully' });
+  } catch (error) {
+    console.error('Error deleting user:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+
+export const updateUserClass = async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { className } = req.body;
+
+    if (!className) {
+      return res.status(400).json({ message: 'Class name is required.' });
+    }
+
+    const user = await UserModel.findByIdAndUpdate(
+      id,
+      { className },
+      { new: true }
+    );
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    res.status(200).json({ message: 'User class updated successfully', user });
+  } catch (error) {
+    console.error('Error updating user class:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+};
+

@@ -11,6 +11,7 @@ import userRoutes from "./routes/users.js"; // Import routes for user management
 import attendanceRoutes from "./routes/attendance.js"; // Import routes for attendance features
 import taskRoutes from "./routes/tasks.js"; // Import routes for tasks/assignments
 import examRoutes from "./routes/exams.js"; // Import routes for exams/tests
+import classesRoutes from "./routes/classes.js"; // Import routes for classes
 import http from "http";
 import { Server } from "socket.io";
 import { fileURLToPath } from "url";
@@ -113,6 +114,7 @@ app.use("/api/users", userRoutes); // Mount user management API routes
 app.use("/api/attendance", attendanceRoutes); // Mount attendance API routes
 app.use("/api/tasks", taskRoutes); // Mount tasks API routes
 app.use("/api/exams", examRoutes); // Mount exams API routes
+app.use("/api", classesRoutes); // Mount classes API routes
 
 
 // --- Email Verification Routes ---
