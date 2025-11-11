@@ -13,7 +13,6 @@ import taskRoutes from "./routes/tasks.js"; // Import routes for tasks/assignmen
 import examRoutes from "./routes/exams.js"; // Import routes for exams/tests
 import http from "http";
 import { Server } from "socket.io";
-import serverless from "serverless-http";
 import { requireAuth, requireRole } from "./utils/authMiddleware.js"; // Custom middleware for checking authentication and roles
 import { UserModel } from "./models/User.js"; // MongoDB User model
 import { hashPassword } from "./utils/hash.js"; // Utility function for password hashing
@@ -24,7 +23,7 @@ const app = express(); // Initialize the Express application
 const PORT = process.env.PORT || 4000; // Define the port to run the server on
 const isVercel = Boolean(process.env.VERCEL);
 let server: http.Server | undefined;
-let io: any;
+let io: Server | { emit: (...args: unknown[]) => void; to: () => { emit: (...args: unknown[]) => void }; on: (...args: unknown[]) => void };
 
 if (!isVercel) {
   server = http.createServer(app);
@@ -286,5 +285,5 @@ if (!isVercel && server) {
   });
 }
 
-const handler = serverless(app);
-export default isVercel ? handler : server;
+const handler = (req: Request, res: Response) => app(req, res);
+export default handler;

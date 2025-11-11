@@ -12,7 +12,6 @@ import taskRoutes from "./routes/tasks.js"; // Import routes for tasks/assignmen
 import examRoutes from "./routes/exams.js"; // Import routes for exams/tests
 import http from "http";
 import { Server } from "socket.io";
-import serverless from "serverless-http";
 import { requireAuth, requireRole } from "./utils/authMiddleware.js"; // Custom middleware for checking authentication and roles
 import { UserModel } from "./models/User.js"; // MongoDB User model
 import { hashPassword } from "./utils/hash.js"; // Utility function for password hashing
@@ -31,15 +30,14 @@ if (!isVercel) {
     app.set("io", io);
 }
 else {
-    const noop = () => { };
-    const stubIo = {
+    const noop = () => undefined;
+    io = {
         emit: noop,
         to: () => ({ emit: noop }),
         on: noop,
     };
-    app.set("io", stubIo);
+    app.set("io", io);
 }
-// Global IO
 // --- Global Middleware Setup ---
 app.use(cors()); // Enable CORS for all incoming requests
 app.use(express.json()); // Middleware to parse incoming requests with JSON payloads
@@ -248,6 +246,6 @@ if (!isVercel && server) {
         console.log(`talabaoasatiza Service is running on 🚀 Server + Socket.IO Port ${PORT}`);
     });
 }
-const handler = serverless(app);
-export default isVercel ? handler : server;
+const handler = (req, res) => app(req, res);
+export default handler;
 //# sourceMappingURL=index.mjs.map
