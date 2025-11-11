@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard</title>
+    <title>Profile</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link rel="stylesheet" href="/css/global.css">
 </head>
@@ -34,8 +34,7 @@
             <button id="logoutBtnMobile" class="block w-full text-left px-4 py-2 text-red-500 hover:bg-gray-200">Logout</button>
         </div>
     </nav>
-    <div id="root" class="container mx-auto p-4"></div>
-
+    <div id="root"></div>
     <script>
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
         const mobileMenu = document.getElementById('mobileMenu');
@@ -61,18 +60,11 @@
 
         logoutBtn.addEventListener('click', logout);
         logoutBtnMobile.addEventListener('click', logout);
-
-        const user = JSON.parse(localStorage.getItem('user'));
-        if (user) {
-            const root = document.getElementById('root');
-            if (user.role === 'student') {
-                window.location.href = '/student-dashboard';
-            } else if (user.role === 'teacher') {
-                window.location.href = '/teacher-dashboard';
-            }
-        } else {
-            window.location.href = '/login';
-        }
+    </script>
+    <script type="module">
+        import { renderProfile } from '/js/components/Profile.js';
+        const root = document.getElementById('root');
+        root.innerHTML = renderProfile();
     </script>
 </body>
 </html>

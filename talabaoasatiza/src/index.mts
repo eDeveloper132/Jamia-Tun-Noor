@@ -60,9 +60,31 @@ await connectToDatabase(); // Connect to the MongoDB database (using top-level a
 
 // Protected Home Route: Requires authentication and specific roles to access
 app.get("/", requireAuth, requireRole(["student", "teacher"]), (req: Request, res: Response) => {
+    const user = (req as any).user;
+    if (user.role === 'student') {
+        return res.sendFile(path.join(publicDir, "protected", "student-dashboard.html"));
+    } else if (user.role === 'teacher') {
+        return res.sendFile(path.join(publicDir, "protected", "teacher-dashboard.html"));
+    }
     return res.sendFile(path.join(publicDir, "protected", "index.html")); // Serve the protected main page
   }
 );
+
+app.get("/student-dashboard", requireAuth, requireRole(["student"]), (req: Request, res: Response) => {
+    return res.sendFile(path.join(publicDir, "protected", "student-dashboard.html"));
+});
+
+app.get("/teacher-dashboard", requireAuth, requireRole(["teacher"]), (req: Request, res: Response) => {
+    return res.sendFile(path.join(publicDir, "protected", "teacher-dashboard.html"));
+});
+
+app.get("/profile", requireAuth, requireRole(["student", "teacher"]), (req: Request, res: Response) => {
+    return res.sendFile(path.join(publicDir, "protected", "profile.html"));
+});
+
+app.get("/settings", requireAuth, requireRole(["student", "teacher"]), (req: Request, res: Response) => {
+    return res.sendFile(path.join(publicDir, "protected", "settings.html"));
+});
 
 // Route to serve the login HTML page
 app.get("/login", (req: Request, res: Response) => {
