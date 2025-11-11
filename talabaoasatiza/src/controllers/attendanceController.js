@@ -58,4 +58,53 @@ export async function getUserAttendance(req, res) {
         return res.status(500).json({ error: "Server error" });
     }
 }
+export async function getMyAttendance(req, res) {
+    try {
+        const userId = req.user._id;
+        const today = new Date().toISOString().split('T')[0]; // YYYY-MM-DD
+        const todayRecord = await AttendanceModel.findOne({ user: userId, date: today });
+        const records = await AttendanceModel.find({ user: userId }).sort({ date: -1 }).limit(30);
+        return res.json({ today: todayRecord, recent: records });
+    }
+    catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: "Server error" });
+    }
+}
+export async function markOrUpdateMyAttendance(req, res) {
+    try {
+        const userId = req.user._id;
+        const { date, entryTime, exitTime, status } = req.body;
+        if (!date)
+            return res.status(400).json({ error: "Date is required" });
+        let attendance = await AttendanceModel.findOne({ user: userId, date });
+        if (attendance) {
+            // Update existing record
+            const before = attendance.toObject();
+            attendance.entryTime = entryTime || attendance.entryTime;
+            attendance.exitTime = exitTime || attendance.exitTime;
+            attendance.status = status || attendance.status;
+            await attendance.save();
+            await AuditLogModel.create({ actor: userId, action: "update_my_attendance", collectionName: "Attendance", documentId: attendance._id, before, after: attendance });
+        }
+        else {
+            // Create new record
+            attendance = await AttendanceModel.create({
+                user: userId,
+                userRole: 'teacher',
+                date,
+                entryTime,
+                exitTime,
+                status: status || 'present',
+                markedBy: userId,
+            });
+            await AuditLogModel.create({ actor: userId, action: "mark_my_attendance", collectionName: "Attendance", documentId: attendance._id, after: attendance });
+        }
+        return res.json({ attendance });
+    }
+    catch (err) {
+        console.error(err);
+        return res.status(500).json({ error: "Server error" });
+    }
+}
 //# sourceMappingURL=attendanceController.js.map
