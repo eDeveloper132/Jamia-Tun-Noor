@@ -133,6 +133,82 @@ function escapeHtml(unsafe: string) {
     .replaceAll("'", "&#039;");
 }
 
+export async function sendWelcomeEmail(email: string) {
+  if (!email) {
+    console.error("No recipient email defined");
+    return;
+  }
+
+  const subject = "Welcome to Jamia-Tun-Noor!";
+  const html = `
+    <div style="font-family: Arial, sans-serif; line-height:1.4;">
+      <h2>Welcome!</h2>
+      <p>Your account has been approved by an administrator.</p>
+      <p>You can now log in to your account.</p>
+    </div>
+  `;
+  const text = `Your account has been approved. You can now log in.`;
+
+  try {
+    const info = await sendMail(email, subject, html, text);
+    console.log("Welcome email sent:", info.messageId);
+    return info;
+  } catch (err) {
+    console.error("Failed to send welcome email:", err);
+    throw err;
+  }
+}
+
+export async function sendAdminNotificationEmail(adminEmail: string, userEmail: string) {
+  if (!adminEmail) {
+    console.error("No recipient email defined");
+    return;
+  }
+
+  const subject = "New User Registration";
+  const html = `
+    <div style="font-family: Arial, sans-serif; line-height:1.4;">
+      <h2>New User Awaiting Approval</h2>
+      <p>A new user with the email address ${userEmail} has registered and is waiting for admin approval.</p>
+    </div>
+  `;
+  const text = `A new user with the email address ${userEmail} has registered and is waiting for admin approval.`;
+
+  try {
+    const info = await sendMail(adminEmail, subject, html, text);
+    console.log("Admin notification email sent:", info.messageId);
+    return info;
+  } catch (err) {
+    console.error("Failed to send admin notification email:", err);
+    throw err;
+  }
+}
+
+export async function sendApprovalEmail(email: string) {
+  if (!email) {
+    console.error("No recipient email defined");
+    return;
+  }
+
+  const subject = "Your Account has been Approved";
+  const html = `
+    <div style="font-family: Arial, sans-serif; line-height:1.4;">
+      <h2>Account Approved</h2>
+      <p>Your account has been approved by an administrator. You can now log in.</p>
+    </div>
+  `;
+  const text = `Your account has been approved. You can now log in.`;
+
+  try {
+    const info = await sendMail(email, subject, html, text);
+    console.log("Approval email sent:", info.messageId);
+    return info;
+  } catch (err) {
+    console.error("Failed to send approval email:", err);
+    throw err;
+  }
+}
+
 /* Attempt to verify transporter at startup for better DX */
 transporter.verify().then(
   () => console.log("Mail transporter is ready"),

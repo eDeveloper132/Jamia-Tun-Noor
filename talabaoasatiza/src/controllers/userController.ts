@@ -1,6 +1,7 @@
 import type { Request, Response } from "express";
 import { UserModel, type IUser } from "../models/User.js";
 import { hashPassword } from "../utils/hash.js";
+import { sendWelcomeEmail, sendApprovalEmail } from "../utils/mailer.js";
 
 export async function listUsers(req: Request, res: Response) {
   const { role, className, page = "1", limit = "50" } = req.query;
@@ -36,7 +37,17 @@ export async function getUser(req: Request, res: Response) {
 export async function updateUser(req: Request, res: Response) {
   const update = req.body;
   if (update.password) delete update.password; // don't allow raw password change here
+
+  const oldUser = await UserModel.findById(req.params.id);
+  if (!oldUser) return res.status(404).json({ error: "Not found" });
+
   const user = await UserModel.findByIdAndUpdate(req.params.id, update, { new: true }).select("-passwordHash");
   if (!user) return res.status(404).json({ error: "Not found" });
+
+  if (update.isAdminApproved && !oldUser.isAdminApproved) {
+    await sendWelcomeEmail(user.email);
+    await sendApprovalEmail(user.email);
+  }
+
   return res.json({ user });
 }
