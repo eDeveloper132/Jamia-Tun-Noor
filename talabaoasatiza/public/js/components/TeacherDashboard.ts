@@ -58,6 +58,68 @@ async function setupAttendanceForm() {
     });
 }
 
+async function getClasses() {
+    const response = await fetch("/api/classes", {
+        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+    });
+    if (!response.ok) {
+        console.error("Failed to fetch classes");
+        return [];
+    }
+    const data = await response.json();
+    return data.classes;
+}
+
+function populateClassDropdown(classes: any[]) {
+    const select = document.getElementById('task-class') as HTMLSelectElement;
+    if (!select) return;
+
+    for (const cls of classes) {
+        const option = document.createElement('option');
+        option.value = cls.name;
+        option.textContent = cls.name;
+        select.appendChild(option);
+    }
+}
+
+async function setupAssignTaskForm() {
+    const form = document.getElementById('assign-task-form') as HTMLFormElement;
+    if (!form) return;
+
+    const classes = await getClasses();
+    populateClassDropdown(classes);
+
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const formData = new FormData(form);
+        const title = formData.get('task-title') as string;
+        const subject = formData.get('task-subject') as string;
+        const description = formData.get('task-description') as string;
+        const className = formData.get('task-class') as string;
+        const dueDate = formData.get('task-due-date') as string;
+
+        const response = await fetch('/api/tasks/class', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+            body: JSON.stringify({ title, subject, description, className, dueDate }),
+        });
+
+        const messageDiv = document.getElementById('assign-task-message');
+        if (!messageDiv) return;
+
+        if (response.ok) {
+            const result = await response.json();
+            messageDiv.textContent = result.message;
+            messageDiv.className = 'text-green-500';
+            form.reset();
+        } else {
+            const errorData = await response.json();
+            messageDiv.textContent = `Failed to assign task: ${errorData.error}`;
+            messageDiv.className = 'text-red-500';
+        }
+    });
+}
+
 export function renderTeacherDashboard(): string {
     // Fetch and render attendance as soon as the dashboard loads
     getMyAttendance().then(data => {
@@ -68,6 +130,7 @@ export function renderTeacherDashboard(): string {
 
     // Setup the form for interaction
     setTimeout(setupAttendanceForm, 0);
+    setTimeout(setupAssignTaskForm, 0);
 
     return `
         <div class="container mx-auto p-4">

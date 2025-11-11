@@ -1,13 +1,13 @@
 // ./src/utils/authMiddleware.ts
-import type { Request, Response, NextFunction } from "express";
+import type { Request as ExpressRequest, Response as ExpressResponse, NextFunction } from "express";
 import { verifyJwt } from "./jwt.js";
 import { UserModel } from "../models/User.js";
 
-export interface AuthRequest extends Request {
+export interface AuthRequest extends ExpressRequest {
   user?: any;
 }
 
-export async function requireAuth(req: AuthRequest, res: Response, next: NextFunction) {
+export async function requireAuth(req: AuthRequest, res: ExpressResponse, next: NextFunction) {
   try {
     const authHeader = req.headers.authorization;
     let token: string | undefined;
@@ -51,7 +51,7 @@ export async function requireAuth(req: AuthRequest, res: Response, next: NextFun
 
 
 export function requireRole(roles: string[]) {
-  return (req: AuthRequest, res: Response, next: NextFunction) => {
+  return (req: AuthRequest, res: ExpressResponse, next: NextFunction) => {
     if (!req.user) return res.status(401).json({ error: "Unauthorized" }).redirect("/login");
     if (!roles.includes(String(req.user.role))) return res.status(403).json({ error: "Forbidden" });
     next();
