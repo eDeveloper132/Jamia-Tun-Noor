@@ -27,6 +27,7 @@
     "pdfkit": "^0.17.2",
     "serverless-http": "^4.0.0",
     "socket.io": "^4.8.1",
+    "tailwindcss": "^4.1.17",
     "uuid": "^13.0.0"
   },
   "devDependencies": {
@@ -39,6 +40,7 @@
     "@types/node": "^24.9.1",
     "@types/nodemailer": "^7.0.2",
     "@types/socket.io": "^3.0.1",
+    "@types/tailwindcss": "^3.0.11",
     "@types/uuid": "^10.0.0",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0"
