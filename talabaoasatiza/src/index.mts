@@ -12,6 +12,7 @@ import attendanceRoutes from "./routes/attendance.js"; // Import routes for atte
 import taskRoutes from "./routes/tasks.js"; // Import routes for tasks/assignments
 import examRoutes from "./routes/exams.js"; // Import routes for exams/tests
 import classesRoutes from "./routes/classes.js"; // Import routes for classes
+import communicationRoutes from "./routes/communications.js"; // Import routes for teacher communications
 import http from "http";
 import { Server } from "socket.io";
 import { fileURLToPath } from "url";
@@ -115,6 +116,7 @@ app.use("/api/attendance", attendanceRoutes); // Mount attendance API routes
 app.use("/api/tasks", taskRoutes); // Mount tasks API routes
 app.use("/api/exams", examRoutes); // Mount exams API routes
 app.use("/api", classesRoutes); // Mount classes API routes
+app.use("/api/communications", communicationRoutes); // Mount teacher communication routes
 
 
 // --- Email Verification Routes ---
