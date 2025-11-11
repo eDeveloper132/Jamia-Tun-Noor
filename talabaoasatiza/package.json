@@ -6,7 +6,8 @@
   "scripts": {
     "start": "tsc && node ./src/index.mjs",
     "seed": "ts-node --esm ./src/seed/seed.ts",
-    "seed:full": "node ./src/seed/fullSeed.js"
+    "seed:full": "node ./src/seed/fullSeed.js",
+    "build:css": "npx tailwindcss -i ./public/css/global.css -o ./public/css/styles.css"
   },
   "engines": {
     "node": "22.x"
