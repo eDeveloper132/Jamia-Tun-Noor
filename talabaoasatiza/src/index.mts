@@ -13,6 +13,7 @@ import taskRoutes from "./routes/tasks.js"; // Import routes for tasks/assignmen
 import examRoutes from "./routes/exams.js"; // Import routes for exams/tests
 import http from "http";
 import { Server } from "socket.io";
+import { fileURLToPath } from "url";
 import { requireAuth, requireRole } from "./utils/authMiddleware.js"; // Custom middleware for checking authentication and roles
 import { UserModel } from "./models/User.js"; // MongoDB User model
 import { hashPassword } from "./utils/hash.js"; // Utility function for password hashing
@@ -46,7 +47,9 @@ app.use(cors()); // Enable CORS for all incoming requests
 app.use(express.json()); // Middleware to parse incoming requests with JSON payloads
 app.use(cookieParser()); // Middleware to parse and handle cookies
 // Serve static assets (CSS, client-side JS, images) from the 'public' directory
-const publicDir = path.join(process.cwd(), "public");
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
+const publicDir = path.join(__dirname, "..", "public");
 app.use(express.static(publicDir));
 
 // --- Database Connection ---
