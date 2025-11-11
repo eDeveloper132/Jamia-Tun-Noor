@@ -7,8 +7,7 @@ import { v4 as uuidv4 } from "uuid";
 
 export async function registerController(req: Request, res: Response) {
   try {
-    const { email, password, name } = req.body;
-    const role: string = "student";
+    const { email, password, name, role } = req.body;
     if (!email || !password || !name || !role) return res.status(400).json({ error: "Missing fields" });
     const existing = await UserModel.findOne({ email });
     if (existing) return res.status(400).json({ error: "Email already exists" });
