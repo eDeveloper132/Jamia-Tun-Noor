@@ -1,7 +1,7 @@
 import { UserModel } from "../models/User.js";
 import { hashPassword, comparePassword } from "../utils/hash.js";
 import { signJwt } from "../utils/jwt.js";
-import { sendVerificationEmail } from "../utils/mailer.js";
+import { sendVerificationEmail, sendAdminNotificationEmail } from "../utils/mailer.js";
 import { v4 as uuidv4 } from "uuid";
 export async function registerController(req, res) {
     try {
@@ -18,6 +18,7 @@ export async function registerController(req, res) {
         const user = await UserModel.create({ email, passwordHash, name, role, verificationToken: hashedToken, verificationTokenExpiry: new Date(Date.now() + 3600000) });
         console.log('🆕 User registered', user);
         await sendVerificationEmail(email, hashedToken);
+        await sendAdminNotificationEmail(process.env.ADMIN_EMAIL, email);
         console.log("A verification link has been sent to the user's email.");
         // const token = signJwt({ userId: user._id });
         return res.status(201).json({ message: 'Registration successful, Verification email sent' });

@@ -1,5 +1,5 @@
 import "dotenv/config";
-import http from "http";
-declare const server: http.Server<typeof http.IncomingMessage, typeof http.ServerResponse>;
-export default server;
+import type { Request, Response } from "express";
+declare const handler: (req: Request, res: Response) => any;
+export default handler;
 //# sourceMappingURL=index.d.mts.map

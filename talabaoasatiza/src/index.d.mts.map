@@ -1,1 +1,1 @@
-{"version":3,"file":"index.d.mts","sourceRoot":"","sources":["index.mts"],"names":[],"mappings":"AACA,OAAO,eAAe,CAAC;AAYvB,OAAO,IAAI,MAAM,MAAM,CAAC;AAUxB,QAAA,MAAM,MAAM,sEAAyB,CAAC;AAuPtC,eAAe,MAAM,CAAC"}
+{"version":3,"file":"index.d.mts","sourceRoot":"","sources":["index.mts"],"names":[],"mappings":"AACA,OAAO,eAAe,CAAC;AAIvB,OAAO,KAAK,EAAE,OAAO,EAAE,QAAQ,EAAE,MAAM,SAAS,CAAC;AAoTjD,QAAA,MAAM,OAAO,GAAI,KAAK,OAAO,EAAE,KAAK,QAAQ,QAAkB,CAAC;AAC/D,eAAe,OAAO,CAAC"}

@@ -1,5 +1,6 @@
 import { UserModel } from "../models/User.js";
 import { hashPassword } from "../utils/hash.js";
+import { sendWelcomeEmail, sendApprovalEmail } from "../utils/mailer.js";
 export async function listUsers(req, res) {
     const { role, className, page = "1", limit = "50" } = req.query;
     const q = {};
@@ -38,9 +39,16 @@ export async function updateUser(req, res) {
     const update = req.body;
     if (update.password)
         delete update.password; // don't allow raw password change here
+    const oldUser = await UserModel.findById(req.params.id);
+    if (!oldUser)
+        return res.status(404).json({ error: "Not found" });
     const user = await UserModel.findByIdAndUpdate(req.params.id, update, { new: true }).select("-passwordHash");
     if (!user)
         return res.status(404).json({ error: "Not found" });
+    if (update.isAdminApproved && !oldUser.isAdminApproved) {
+        await sendWelcomeEmail(user.email);
+        await sendApprovalEmail(user.email);
+    }
     return res.json({ user });
 }
 //# sourceMappingURL=userController.js.map
