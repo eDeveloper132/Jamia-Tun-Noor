@@ -16,7 +16,7 @@
 
 ---
 
-<p align="center"> Few lines describing your project.
+<p align="center"> A comprehensive platform for managing students and teachers.
     <br> 
 </p>
 
@@ -34,81 +34,71 @@
 
 ## 🧐 About <a name = "about"></a>
 
-Write about 1-2 paragraphs describing the purpose of your project.
+This project is a web application designed to manage students and teachers. It features separate dashboards for students and teachers, user authentication, and responsive design. The frontend is built with plain HTML, CSS (Tailwind CSS), and TypeScript, while the backend uses Node.js with Express.
 
 ## 🏁 Getting Started <a name = "getting_started"></a>
 
-These instructions will get you a copy of the project up and running on your local machine for development and testing purposes. See [deployment](#deployment) for notes on how to deploy the project on a live system.
+These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
 
 ### Prerequisites
 
-What things you need to install the software and how to install them.
-
-```
-Give examples
-```
+Make sure you have Node.js and npm (or yarn) installed.
 
 ### Installing
 
-A step by step series of examples that tell you how to get a development env running.
+1.  Clone the repository:
+    ```bash
+    git clone <repository_url>
+    cd talabaoasatiza
+    ```
+2.  Install dependencies:
+    ```bash
+    npm install
+    ```
+3.  Set up environment variables:
+    Create a `.env` file in the root directory based on `.env.example` and fill in the required values (e.g., MongoDB URI, JWT Secret).
+4.  Compile TypeScript:
+    ```bash
+    npx tsc
+    ```
+5.  Start the server:
+    ```bash
+    npm start
+    ```
 
-Say what the step will be
-
-```
-Give the example
-```
-
-And repeat
-
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo.
+The application will be accessible at `http://localhost:4000` (or your specified port).
 
 ## 🔧 Running the tests <a name = "tests"></a>
 
-Explain how to run the automated tests for this system.
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
+(Currently, there are no automated tests configured for this project.)
 
 ## 🎈 Usage <a name="usage"></a>
 
-Add notes about how to use the system.
+-   **Sign Up/Login:** Access the authentication pages to create an account or log in.
+-   **Student Dashboard:** Students will be redirected to their personalized dashboard upon login.
+-   **Teacher Dashboard:** Teachers will be redirected to their personalized dashboard upon login.
+-   **Profile & Settings:** Both roles can access and manage their profile and settings.
 
 ## 🚀 Deployment <a name = "deployment"></a>
 
-Add additional notes about how to deploy this on a live system.
+(Add specific deployment instructions here if applicable, e.g., Vercel, Heroku, etc.)
 
 ## ⛏️ Built Using <a name = "built_using"></a>
 
-- [MongoDB](https://www.mongodb.com/) - Database
-- [Express](https://expressjs.com/) - Server Framework
-- [VueJs](https://vuejs.org/) - Web Framework
-- [NodeJs](https://nodejs.org/en/) - Server Environment
+-   [MongoDB](https://www.mongodb.com/) - Database
+-   [Express.js](https://expressjs.com/) - Backend Web Framework
+-   [Node.js](https://nodejs.org/en/) - JavaScript Runtime
+-   [TypeScript](https://www.typescriptlang.org/) - Typed JavaScript
+-   [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS Framework
 
 ## ✍️ Authors <a name = "authors"></a>
 
-- [@kylelobo](https://github.com/kylelobo) - Idea & Initial work
+-   [@kylelobo](https://github.com/kylelobo) - Idea & Initial work
 
 See also the list of [contributors](https://github.com/kylelobo/The-Documentation-Compendium/contributors) who participated in this project.
 
-## 🎉 Acknowledgements <a name = "acknowledgement"></a>
+## 🎉 Acknowledgments <a name = "acknowledgement"></a>
 
-- Hat tip to anyone whose code was used
-- Inspiration
-- References
+-   Hat tip to anyone whose code was used
+-   Inspiration
+-   References
