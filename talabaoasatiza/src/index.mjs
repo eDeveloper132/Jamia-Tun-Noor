@@ -43,22 +43,23 @@ app.use(cors()); // Enable CORS for all incoming requests
 app.use(express.json()); // Middleware to parse incoming requests with JSON payloads
 app.use(cookieParser()); // Middleware to parse and handle cookies
 // Serve static assets (CSS, client-side JS, images) from the 'public' directory
-app.use(express.static(path.join("public")));
+const publicDir = path.join(process.cwd(), "public");
+app.use(express.static(publicDir));
 // --- Database Connection ---
 await connectToDatabase(); // Connect to the MongoDB database (using top-level await)
 // --- Server Start ---
 // --- Frontend/UI Routes (Serving HTML) ---
 // Protected Home Route: Requires authentication and specific roles to access
 app.get("/", requireAuth, requireRole(["student", "teacher"]), (req, res) => {
-    return res.sendFile(path.resolve("public", "protected", "index.html")); // Serve the protected main page
+    return res.sendFile(path.join(publicDir, "protected", "index.html")); // Serve the protected main page
 });
 // Route to serve the login HTML page
 app.get("/login", (req, res) => {
-    res.sendFile(path.resolve("public", "auth", "signin.html"));
+    res.sendFile(path.join(publicDir, "auth", "signin.html"));
 });
 // Route to serve the signup HTML page
 app.get("/signup", (req, res) => {
-    res.sendFile(path.resolve("public", "auth", "signup.html"));
+    res.sendFile(path.join(publicDir, "auth", "signup.html"));
 });
 // Logout endpoint: Clears the authentication cookie
 app.get("/logout", (req, res) => {
@@ -67,7 +68,7 @@ app.get("/logout", (req, res) => {
 });
 // Route to serve the HTML page for setting a new password after a 'forgot password' flow
 app.get('/forgot-password', (req, res) => {
-    res.sendFile(path.resolve("public", "auth", "reset-password.html"));
+    res.sendFile(path.join(publicDir, "auth", "reset-password.html"));
 });
 // --- API Router Mounting ---
 app.use("/api/auth", authRoutes); // Mount authentication-related API routes
