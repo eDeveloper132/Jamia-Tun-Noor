@@ -1,5 +1,12 @@
-export function renderProfile() {
-    const user = JSON.parse(localStorage.getItem('user'));
+// D:\Jamia-Tun-Noor\talabaoasatiza\public\js\components\Profile.ts
+interface User {
+    name: string;
+    email: string;
+    role: string;
+}
+
+export function renderProfile(): string {
+    const user: User = JSON.parse(localStorage.getItem('user') as string);
     return `
         <div class="container mx-auto p-4">
             <h1 class="text-3xl font-bold mb-4">My Profile</h1>
@@ -11,4 +18,3 @@ export function renderProfile() {
         </div>
     `;
 }
-//# sourceMappingURL=Profile.js.map
