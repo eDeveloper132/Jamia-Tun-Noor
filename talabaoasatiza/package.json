@@ -7,7 +7,7 @@
     "start": "tsc && node ./src/index.mjs",
     "seed": "ts-node --esm ./src/seed/seed.ts",
     "seed:full": "node ./src/seed/fullSeed.js",
-    "build:css": "npx tailwindcss -i ./public/css/global.css -o ./public/css/styles.css"
+    "build:css": "postcss ./public/css/global.css -o ./public/css/styles.css"
   },
   "engines": {
     "node": "22.x"
@@ -28,10 +28,10 @@
     "pdfkit": "^0.17.2",
     "serverless-http": "^4.0.0",
     "socket.io": "^4.8.1",
-    "tailwindcss": "^4.1.17",
     "uuid": "^13.0.0"
   },
   "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.17",
     "@types/bcrypt": "^6.0.0",
     "@types/cookie-parser": "^1.4.9",
     "@types/cors": "^2.8.19",
@@ -43,6 +43,10 @@
     "@types/socket.io": "^3.0.1",
     "@types/tailwindcss": "^3.0.11",
     "@types/uuid": "^10.0.0",
+    "autoprefixer": "^10.4.22",
+    "postcss": "^8.5.6",
+    "postcss-cli": "^11.0.1",
+    "tailwindcss": "^4.1.17",
     "ts-node": "^10.9.2",
     "ts-node-dev": "^2.0.0"
   }
