@@ -117,25 +117,36 @@ const loader = document.getElementById('loader'); // Loader element
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
     const role = document.getElementById('role').value;
-    const response = await fetch('/api/auth/register', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({ name, email, password, role })
-    });
-        const data = await response.json();
-        console.log(data);
-    if (response.ok) {
+
+    try {
+      const response = await fetch('/api/auth/register', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ name, email, password, role })
+      });
+
+      let data = {};
+      try {
+        data = await response.json();
+      } catch {
+        data = { message: 'Unexpected server response.' };
+      }
+
+      if (!response.ok) {
+        loader.style.display = 'none';
+        return showToast(data.message || 'Unable to sign up. Please try again.', 'error');
+      }
+
       loader.style.display = 'none';
       showToast('Registration successful', 'success');
       window.location.href = '/login';
-    }
-    if (!response.ok) {
+    } catch (error) {
+      console.error('Registration failed:', error);
       loader.style.display = 'none';
-      showToast(data.message, 'error');
+      showToast('Network error. Please try again.', 'error');
     }
-
   });
 </script>
 </body>

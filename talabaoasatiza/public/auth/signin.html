@@ -84,17 +84,37 @@
     loader.style.display = 'block';
     const email = document.getElementById('email').value;
     const password = document.querySelector('input[name="password"]').value;
-    const response = await fetch('/api/auth/login', {
-      method: 'POST', headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, password })
-    });
-    const result = await response.json();
-    loader.style.display = 'none';
-    if (!response.ok) return showToast(result.message, 'error');
-    localStorage.setItem('token', result.token);
-    localStorage.setItem('user', JSON.stringify(result.user));
-    showToast('Login successful', 'success');
-    window.location.href = '/';
+
+    try {
+      const response = await fetch('/api/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+
+      let result = {};
+      try {
+        result = await response.json();
+      } catch (parseError) {
+        // If parsing fails, fall back to a generic error object
+        result = { message: 'Unexpected server response.' };
+      }
+
+      if (!response.ok) {
+        loader.style.display = 'none';
+        return showToast(result.message || 'Unable to sign in. Please try again.', 'error');
+      }
+
+      localStorage.setItem('token', result.token);
+      localStorage.setItem('user', JSON.stringify(result.user));
+      loader.style.display = 'none';
+      showToast('Login successful', 'success');
+      window.location.href = '/';
+    } catch (error) {
+      console.error('Login failed:', error);
+      loader.style.display = 'none';
+      showToast('Network error. Please try again.', 'error');
+    }
   });
 
   forgotBtn.addEventListener('click', async () => {

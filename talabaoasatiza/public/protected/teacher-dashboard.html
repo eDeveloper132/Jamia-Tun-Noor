@@ -64,6 +64,7 @@
                     <button type="submit" class="bg-blue-500 text-white px-4 py-2 rounded-lg hover:bg-blue-600">Save Attendance</button>
                 </div>
             </form>
+            <p id="attendance-status" class="mt-2 text-sm text-slate-600"></p>
             <div id="attendance-today" class="mt-4">
                 <h3 class="text-lg font-bold">Today's Attendance</h3>
                 <p>Loading...</p>
@@ -113,9 +114,11 @@
 
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
         const mobileMenu = document.getElementById('mobileMenu');
-        mobileMenuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
+        if (mobileMenuBtn && mobileMenu) {
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
 
         const logoutBtn = document.getElementById('logoutBtn');
         const logoutBtnMobile = document.getElementById('logoutBtnMobile');
@@ -127,14 +130,21 @@
                     localStorage.removeItem('token');
                     localStorage.removeItem('user');
                     window.location.href = '/login';
+                } else {
+                    alert('Logout failed. Please try again.');
                 }
             } catch (error) {
                 console.error('Logout failed:', error);
+                alert('Network error during logout. Please retry.');
             }
         }
 
-        logoutBtn.addEventListener('click', logout);
-        logoutBtnMobile.addEventListener('click', logout);
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', logout);
+        }
+        if (logoutBtnMobile) {
+            logoutBtnMobile.addEventListener('click', logout);
+        }
     </script>
     <script type="module">
         import { renderTeacherDashboard } from '/js/components/TeacherDashboard.js';

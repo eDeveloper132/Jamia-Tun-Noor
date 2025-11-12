@@ -1,10 +1,34 @@
+type StatusTone = "info" | "success" | "error";
+
+function setAttendanceStatus(message: string, tone: StatusTone = "info") {
+    const statusElement = document.getElementById("attendance-status");
+    if (!statusElement) return;
+    const toneClass = tone === "success" ? "text-green-600" : tone === "error" ? "text-red-600" : "text-slate-600";
+    statusElement.textContent = message;
+    statusElement.className = `mt-2 text-sm ${toneClass}`;
+}
+
+function setAssignTaskMessage(message: string, tone: StatusTone = "info") {
+    const messageDiv = document.getElementById("assign-task-message");
+    if (!messageDiv) return;
+    const toneClass = tone === "success" ? "text-green-600" : tone === "error" ? "text-red-600" : "text-slate-600";
+    messageDiv.textContent = message;
+    messageDiv.className = `mt-4 ${toneClass}`;
+}
+
 async function getMyAttendance() {
-    const response = await fetch("/api/attendance/my-attendance");
-    if (!response.ok) {
-        console.error("Failed to fetch attendance");
+    try {
+        const response = await fetch("/api/attendance/my-attendance");
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.error || "Unable to fetch attendance.");
+        }
+        return await response.json();
+    } catch (error) {
+        console.error("Failed to fetch attendance", error);
+        setAttendanceStatus(error instanceof Error ? error.message : "Unable to fetch attendance.", "error");
         return null;
     }
-    return await response.json();
 }
 
 function renderMyAttendance(attendanceToday: any) {
@@ -18,11 +42,13 @@ function renderMyAttendance(attendanceToday: any) {
             <p>Entry Time: <span class="font-semibold">${attendanceToday.entryTime || 'Not set'}</span></p>
             <p>Exit Time: <span class="font-semibold">${attendanceToday.exitTime || 'Not set'}</span></p>
         `;
+        setAttendanceStatus("Attendance data loaded.", "success");
     } else {
         container.innerHTML = `
             <h3 class="text-lg font-bold">Today's Attendance</h3>
             <p>Not marked for today.</p>
         `;
+        setAttendanceStatus("Attendance not marked for today yet.", "info");
     }
 }
 
@@ -41,39 +67,54 @@ async function setupAttendanceForm() {
         const entryTime = formData.get('entry-time') as string;
         const exitTime = formData.get('exit-time') as string;
 
-        const response = await fetch('/api/attendance/my-attendance', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ date, entryTime, exitTime, status: 'present' }),
-        });
+        setAttendanceStatus("Saving attendance...", "info");
 
-        if (response.ok) {
+        try {
+            const response = await fetch('/api/attendance/my-attendance', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ date, entryTime, exitTime, status: 'present' }),
+            });
+
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.error || "Failed to save attendance.");
+            }
+
             const updatedAttendance = await response.json();
             renderMyAttendance(updatedAttendance.attendance);
-            alert('Attendance saved successfully!');
-        } else {
-            const errorData = await response.json();
-            alert(`Failed to save attendance: ${errorData.error}`);
+            setAttendanceStatus("Attendance saved successfully!", "success");
+        } catch (error) {
+            console.error("Failed to save attendance", error);
+            setAttendanceStatus(error instanceof Error ? error.message : "Failed to save attendance.", "error");
         }
     });
 }
 
 async function getClasses() {
-    const response = await fetch("/api/classes", {
-        headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
-    });
-    if (!response.ok) {
-        console.error("Failed to fetch classes");
-        return [];
+    try {
+        const response = await fetch("/api/classes", {
+            headers: { 'Authorization': `Bearer ${localStorage.getItem('token')}` }
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json().catch(() => ({}));
+            throw new Error(errorData.error || "Unable to load classes.");
+        }
+
+        const data = await response.json();
+        return data.classes ?? [];
+    } catch (error) {
+        console.error("Failed to fetch classes", error);
+        throw error instanceof Error ? error : new Error("Unable to load classes.");
     }
-    const data = await response.json();
-    return data.classes;
 }
 
 function populateClassDropdown(classes: any[]) {
     const select = document.getElementById('task-class') as HTMLSelectElement;
     if (!select) return;
 
+    select.innerHTML = '<option value="">Select a class</option>';
     for (const cls of classes) {
         const option = document.createElement('option');
         option.value = cls.name;
@@ -86,8 +127,18 @@ async function setupAssignTaskForm() {
     const form = document.getElementById('assign-task-form') as HTMLFormElement;
     if (!form) return;
 
-    const classes = await getClasses();
-    populateClassDropdown(classes);
+    try {
+        const classes = await getClasses();
+        if (!classes.length) {
+            setAssignTaskMessage("No classes available to assign tasks.", "info");
+        } else {
+            populateClassDropdown(classes);
+            setAssignTaskMessage("Select a class and submit the form to assign a task.", "info");
+        }
+    } catch (error) {
+        setAssignTaskMessage(error instanceof Error ? error.message : "Unable to load classes.", "error");
+        return;
+    }
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
@@ -98,30 +149,33 @@ async function setupAssignTaskForm() {
         const className = formData.get('task-class') as string;
         const dueDate = formData.get('task-due-date') as string;
 
-        const response = await fetch('/api/tasks/class', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
-            body: JSON.stringify({ title, subject, description, className, dueDate }),
-        });
+        setAssignTaskMessage("Assigning task...", "info");
 
-        const messageDiv = document.getElementById('assign-task-message');
-        if (!messageDiv) return;
+        try {
+            const response = await fetch('/api/tasks/class', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${localStorage.getItem('token')}` },
+                body: JSON.stringify({ title, subject, description, className, dueDate }),
+            });
 
-        if (response.ok) {
+            if (!response.ok) {
+                const errorData = await response.json().catch(() => ({}));
+                throw new Error(errorData.error || "Failed to assign task.");
+            }
+
             const result = await response.json();
-            messageDiv.textContent = result.message;
-            messageDiv.className = 'text-green-500';
+            setAssignTaskMessage(result.message || "Task assigned successfully.", "success");
             form.reset();
-        } else {
-            const errorData = await response.json();
-            messageDiv.textContent = `Failed to assign task: ${errorData.error}`;
-            messageDiv.className = 'text-red-500';
+        } catch (error) {
+            console.error("Failed to assign task", error);
+            setAssignTaskMessage(error instanceof Error ? error.message : "Failed to assign task.", "error");
         }
     });
 }
 
 export function renderTeacherDashboard(): string {
     // Fetch and render attendance as soon as the dashboard loads
+    setAttendanceStatus("Loading today's attendance...", "info");
     getMyAttendance().then(data => {
         if (data) {
             renderMyAttendance(data.today);

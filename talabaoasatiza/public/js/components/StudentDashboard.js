@@ -1,3 +1,10 @@
+function setContainerMessage(containerId, message, tone = "info") {
+    const container = document.getElementById(containerId);
+    if (!container)
+        return;
+    const toneClass = tone === "error" ? "text-red-600" : "text-slate-600";
+    container.innerHTML = `<p class="${toneClass}">${message}</p>`;
+}
 function getStudentId() {
     const userStr = localStorage.getItem('user');
     if (!userStr)
@@ -6,37 +13,78 @@ function getStudentId() {
     return user?._id;
 }
 async function fetchTasks(studentId) {
-    const response = await fetch(`/api/tasks/user/${studentId}`);
-    const data = await response.json();
-    return data.tasks;
+    try {
+        const response = await fetch(`/api/tasks/user/${studentId}`);
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+            throw new Error(data.error || 'Failed to load tasks.');
+        }
+        return data.tasks ?? [];
+    }
+    catch (error) {
+        throw error instanceof Error ? error : new Error('Failed to load tasks.');
+    }
 }
 async function fetchExams(className) {
-    const response = await fetch(`/api/exams/class/${className}`);
-    const data = await response.json();
-    return data.exams;
+    try {
+        const response = await fetch(`/api/exams/class/${className}`);
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+            throw new Error(data.error || 'Failed to load exams.');
+        }
+        return data.exams ?? [];
+    }
+    catch (error) {
+        throw error instanceof Error ? error : new Error('Failed to load exams.');
+    }
 }
 async function fetchAttendance(studentId) {
-    const response = await fetch(`/api/attendance/user/${studentId}`);
-    return await response.json();
+    try {
+        const response = await fetch(`/api/attendance/user/${studentId}`);
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+            throw new Error(data.error || 'Failed to load attendance.');
+        }
+        return data;
+    }
+    catch (error) {
+        throw error instanceof Error ? error : new Error('Failed to load attendance.');
+    }
 }
 async function fetchClasses() {
-    const response = await fetch(`/api/classes`);
-    const data = await response.json();
-    return data.classes;
+    try {
+        const response = await fetch(`/api/classes`);
+        const data = await response.json().catch(() => ({}));
+        if (!response.ok) {
+            throw new Error(data.error || 'Failed to load classes.');
+        }
+        return data.classes ?? [];
+    }
+    catch (error) {
+        throw error instanceof Error ? error : new Error('Failed to load classes.');
+    }
 }
 async function updateUserClass(studentId, className) {
-    await fetch(`/api/users/${studentId}/class`, {
+    const response = await fetch(`/api/users/${studentId}/class`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ className }),
     });
+    const data = await response.json().catch(() => ({}));
+    if (!response.ok) {
+        throw new Error(data.error || 'Unable to save class selection.');
+    }
 }
 async function updateTaskStatus(taskId, status) {
-    await fetch(`/api/tasks/${taskId}/status`, {
+    const response = await fetch(`/api/tasks/${taskId}/status`, {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ status }),
     });
+    if (!response.ok) {
+        const data = await response.json().catch(() => ({}));
+        throw new Error(data.error || 'Failed to update task status.');
+    }
     // Optionally, re-render the tasks or update the UI to reflect the change
 }
 function renderTasks(tasks) {
@@ -95,45 +143,76 @@ function renderAttendance(attendance) {
 export function renderStudentDashboard() {
     const userStr = localStorage.getItem('user');
     if (!userStr) {
-        return '<p>Error: Student not logged in.</p>';
+        return '<p class="text-red-600">Error: Student not logged in.</p>';
     }
     let user = JSON.parse(userStr);
     const studentId = user?._id;
     if (!studentId) {
-        return '<p>Error: Student not logged in.</p>';
+        return '<p class="text-red-600">Error: Student not logged in.</p>';
     }
     if (!user.className) {
         // If no class is selected, show a class selection interface
         setTimeout(async () => {
-            const classes = await fetchClasses();
             const classSelectContainer = document.getElementById('class-select-container');
             if (classSelectContainer) {
-                classSelectContainer.innerHTML = `
-                    <div class="bg-white p-6 rounded-lg shadow-md">
-                        <h2 class="text-2xl font-bold mb-4">Select Your Class</h2>
-                        <select id="class-selector" class="block w-full p-2 border border-gray-300 rounded-md mb-4">
-                            <option value="">-- Please select a class --</option>
-                            ${classes.map(cls => `<option value="${cls.name}">${cls.name}</option>`).join('')}
-                        </select>
-                        <button id="save-class-selection" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Save Class</button>
-                    </div>
-                `;
+                try {
+                    const classes = await fetchClasses();
+                    classSelectContainer.innerHTML = `
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h2 class="text-2xl font-bold mb-4">Select Your Class</h2>
+                            <select id="class-selector" class="block w-full p-2 border border-gray-300 rounded-md mb-4">
+                                <option value="">-- Please select a class --</option>
+                                ${classes.map(cls => `<option value="${cls.name}">${cls.name}</option>`).join('')}
+                            </select>
+                            <button id="save-class-selection" class="bg-blue-500 text-white px-4 py-2 rounded-md hover:bg-blue-600">Save Class</button>
+                            <p id="class-selection-status" class="mt-4 text-sm text-slate-600"></p>
+                        </div>
+                    `;
+                }
+                catch (error) {
+                    classSelectContainer.innerHTML = `
+                        <div class="bg-white p-6 rounded-lg shadow-md">
+                            <h2 class="text-2xl font-bold mb-4">Select Your Class</h2>
+                            <p class="text-red-600">${error instanceof Error ? error.message : 'Failed to load classes. Please refresh.'}</p>
+                        </div>
+                    `;
+                    return;
+                }
                 document.getElementById('save-class-selection')?.addEventListener('click', async () => {
+                    const statusEl = document.getElementById('class-selection-status');
                     const selectedClass = document.getElementById('class-selector').value;
-                    if (selectedClass) {
+                    if (!selectedClass) {
+                        if (statusEl) {
+                            statusEl.textContent = 'Please select a class before saving.';
+                            statusEl.className = 'mt-4 text-sm text-red-600';
+                        }
+                        else {
+                            alert('Please select a class.');
+                        }
+                        return;
+                    }
+                    if (statusEl) {
+                        statusEl.textContent = 'Saving class selection...';
+                        statusEl.className = 'mt-4 text-sm text-slate-600';
+                    }
+                    try {
                         user.className = selectedClass;
                         localStorage.setItem('user', JSON.stringify(user));
-                        // TODO: Send update to backend to persist className
                         await updateUserClass(studentId, selectedClass);
-                        // Re-render the dashboard after class selection
-                        window.location.reload();
-                        const appRoot = document.getElementById('app-root');
-                        if (appRoot) {
-                            appRoot.innerHTML = renderStudentDashboard();
+                        if (statusEl) {
+                            statusEl.textContent = 'Class saved. Reloading dashboard...';
+                            statusEl.className = 'mt-4 text-sm text-green-600';
                         }
+                        setTimeout(() => window.location.reload(), 600);
                     }
-                    else {
-                        alert('Please select a class.');
+                    catch (error) {
+                        if (statusEl) {
+                            statusEl.textContent = error instanceof Error ? error.message : 'Failed to save class selection.';
+                            statusEl.className = 'mt-4 text-sm text-red-600';
+                        }
+                        else {
+                            alert('Failed to save class selection.');
+                        }
                     }
                 });
             }
@@ -148,32 +227,54 @@ export function renderStudentDashboard() {
     }
     // Initial render with loading states for the actual dashboard
     setTimeout(async () => {
-        const tasks = await fetchTasks(studentId);
-        const exams = await fetchExams(user.className);
-        const attendance = await fetchAttendance(studentId);
-        const tasksContainer = document.getElementById('tasks-container');
-        if (tasksContainer) {
-            tasksContainer.innerHTML = renderTasks(tasks);
-        }
-        const examsContainer = document.getElementById('exams-container');
-        if (examsContainer) {
-            examsContainer.innerHTML = renderExams(exams);
-        }
-        const attendanceContainer = document.getElementById('attendance-container');
-        if (attendanceContainer) {
-            attendanceContainer.innerHTML = renderAttendance(attendance);
-        }
-        // Add event listeners for task status changes
-        document.querySelectorAll('.task-status-select').forEach(select => {
-            select.addEventListener('change', async (event) => {
-                const taskId = event.target.dataset.taskId;
-                const status = event.target.value;
-                if (taskId) {
-                    await updateTaskStatus(taskId, status);
-                    // You might want to add a visual indicator that the status was updated
-                }
+        try {
+            const [tasks, exams, attendance] = await Promise.all([
+                fetchTasks(studentId),
+                fetchExams(user.className),
+                fetchAttendance(studentId)
+            ]);
+            const tasksContainer = document.getElementById('tasks-container');
+            if (tasksContainer) {
+                tasksContainer.innerHTML = renderTasks(tasks);
+            }
+            const examsContainer = document.getElementById('exams-container');
+            if (examsContainer) {
+                examsContainer.innerHTML = renderExams(exams);
+            }
+            const attendanceContainer = document.getElementById('attendance-container');
+            if (attendanceContainer) {
+                attendanceContainer.innerHTML = renderAttendance(attendance);
+            }
+            // Add event listeners for task status changes
+            document.querySelectorAll('.task-status-select').forEach(select => {
+                const selectEl = select;
+                selectEl.dataset.previousValue = selectEl.value;
+                selectEl.addEventListener('change', async (event) => {
+                    const targetSelect = event.target;
+                    const taskId = targetSelect.dataset.taskId;
+                    const statusValue = targetSelect.value;
+                    const previousValue = targetSelect.dataset.previousValue || targetSelect.value;
+                    if (!taskId)
+                        return;
+                    try {
+                        await updateTaskStatus(taskId, statusValue);
+                    }
+                    catch (error) {
+                        alert(error instanceof Error ? error.message : 'Failed to update task status.');
+                        // revert to previous selection for clarity
+                        targetSelect.value = previousValue;
+                        targetSelect.dataset.previousValue = previousValue;
+                        return;
+                    }
+                    targetSelect.dataset.previousValue = statusValue;
+                });
             });
-        });
+        }
+        catch (error) {
+            setContainerMessage('tasks-container', error instanceof Error ? error.message : 'Failed to load dashboard data.', 'error');
+            setContainerMessage('exams-container', 'Unable to load exams right now.', 'error');
+            setContainerMessage('attendance-container', 'Attendance data could not be retrieved.', 'error');
+        }
     }, 0);
     return `
         <div class="container mx-auto p-4">
