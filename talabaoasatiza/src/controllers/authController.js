@@ -5,7 +5,8 @@ import { sendVerificationEmail, sendAdminNotificationEmail } from "../utils/mail
 import { v4 as uuidv4 } from "uuid";
 export async function registerController(req, res) {
     try {
-        const { email, password, name, role } = req.body;
+        const { email, password, name } = req.body;
+        const role = "student";
         if (!email || !password || !name || !role)
             return res.status(400).json({ error: "Missing fields" });
         const existing = await UserModel.findOne({ email });

@@ -61,11 +61,7 @@
     <input type="text" name="name" id="namee" placeholder="Full Name" required class="w-full px-4 py-2 border rounded-lg" />
     <input type="email" name="email" id="email" placeholder="Email" required class="w-full px-4 py-2 border rounded-lg" />
     <input type="password" name="password" id="password" placeholder="Password" required class="w-full px-4 py-2 border rounded-lg" />
-    <select name="role" id="role" required class="w-full px-4 py-2 border rounded-lg">
-      <option value="" disabled selected>Select Role</option>
-      <option value="student">Student</option>
-      <option value="teacher">Teacher</option>
-      </select>
+
     <button type="submit" class="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700">Sign Up</button>
   </form>
   <p class="text-center mt-4 text-sm">
@@ -116,7 +112,6 @@ const loader = document.getElementById('loader'); // Loader element
     const name = document.getElementById('namee').value;
     const email = document.getElementById('email').value;
     const password = document.getElementById('password').value;
-    const role = document.getElementById('role').value;
 
     try {
       const response = await fetch('/api/auth/register', {
@@ -124,7 +119,7 @@ const loader = document.getElementById('loader'); // Loader element
         headers: {
           'Content-Type': 'application/json'
         },
-        body: JSON.stringify({ name, email, password, role })
+        body: JSON.stringify({ name, email, password})
       });
 
       let data = {};
