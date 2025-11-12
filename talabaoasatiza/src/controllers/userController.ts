@@ -52,6 +52,28 @@ export async function updateUser(req: Request, res: Response) {
   return res.json({ user });
 }
 
+export async function updateProfile(req: Request, res: Response) {
+  try {
+    const { id } = req.params;
+    const { pastQualifications, currentEnrollment, profilePicture } = req.body;
+
+    const user = await UserModel.findByIdAndUpdate(
+      id,
+      { pastQualifications, currentEnrollment, profilePicture },
+      { new: true }
+    ).select("-passwordHash");
+
+    if (!user) {
+      return res.status(404).json({ message: 'User not found.' });
+    }
+
+    res.status(200).json({ message: 'Profile updated successfully', user });
+  } catch (error) {
+    console.error('Error updating profile:', error);
+    res.status(500).json({ message: 'Server error' });
+  }
+}
+
 export const deleteUser = async (req: Request, res: Response) => {
   try {
     const { id } = req.params;

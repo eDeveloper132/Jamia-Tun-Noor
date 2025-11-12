@@ -13,12 +13,12 @@ export function renderSettings() {
     if (isTeacher) {
         setTimeout(() => {
             const form = document.getElementById('teacher-email-form');
-            const studentSelect = document.getElementById('email-student-select');
+            const classSelect = document.getElementById('email-class-select');
             const subjectInput = document.getElementById('email-subject');
             const messageInput = document.getElementById('email-message');
             const statusElement = document.getElementById('email-status');
             const token = localStorage.getItem('token');
-            if (!form || !studentSelect || !subjectInput || !messageInput || !statusElement) {
+            if (!form || !classSelect || !subjectInput || !messageInput || !statusElement) {
                 return;
             }
             const setStatus = (message, tone = 'info') => {
@@ -29,10 +29,11 @@ export function renderSettings() {
                         ? 'text-red-600'
                         : 'text-slate-600'}`;
             };
-            const loadStudents = async () => {
-                setStatus('Loading students...', 'info');
+            const loadClasses = async () => {
+                setStatus('Loading classes...', 'info');
+                classSelect.disabled = true;
                 try {
-                    const response = await fetch('/api/communications/students', {
+                    const response = await fetch('/api/communications/classes', {
                         headers: {
                             'Accept': 'application/json',
                             ...(token ? { 'Authorization': `Bearer ${token}` } : {})
@@ -41,37 +42,42 @@ export function renderSettings() {
                     });
                     if (!response.ok) {
                         const data = await response.json().catch(() => ({}));
-                        throw new Error(data.error || 'Failed to load students');
+                        throw new Error(data.error || 'Failed to load classes');
                     }
                     const data = await response.json();
-                    studentSelect.innerHTML = '<option value="">Select a student</option>';
-                    if (!data.students || data.students.length === 0) {
-                        setStatus('No students available to email.', 'info');
+                    classSelect.innerHTML = '<option value="">Select a class</option>';
+                    if (!data.classes || data.classes.length === 0) {
+                        setStatus('No classes with students available to email.', 'info');
+                        classSelect.disabled = true;
                         return;
                     }
-                    data.students
+                    classSelect.disabled = false;
+                    data.classes
                         .sort((a, b) => a.name.localeCompare(b.name))
-                        .forEach((student) => {
+                        .forEach((classOption) => {
                         const option = document.createElement('option');
-                        option.value = student.id;
-                        const classInfo = student.className ? ` • ${student.className}` : '';
-                        option.textContent = `${student.name} (${student.email})${classInfo}`;
-                        studentSelect.append(option);
+                        option.value = classOption.name;
+                        const countInfo = typeof classOption.studentCount === 'number'
+                            ? ` (${classOption.studentCount} students)`
+                            : '';
+                        option.textContent = `${classOption.name}${countInfo}`;
+                        classSelect.append(option);
                     });
                     setStatus('Ready to send an email.');
                 }
                 catch (error) {
-                    console.error('Failed to load students', error);
-                    setStatus(error instanceof Error ? error.message : 'Failed to load students', 'error');
+                    console.error('Failed to load classes', error);
+                    classSelect.innerHTML = '<option value="">Unable to load classes</option>';
+                    setStatus(error instanceof Error ? error.message : 'Failed to load classes', 'error');
                 }
             };
             form.addEventListener('submit', async (event) => {
                 event.preventDefault();
-                const studentId = studentSelect.value;
+                const className = classSelect.value;
                 const subject = subjectInput.value.trim();
                 const message = messageInput.value.trim();
-                if (!studentId) {
-                    setStatus('Please select a student to email.', 'error');
+                if (!className) {
+                    setStatus('Please select a class to email.', 'error');
                     return;
                 }
                 if (!subject || !message) {
@@ -87,7 +93,7 @@ export function renderSettings() {
                             ...(token ? { 'Authorization': `Bearer ${token}` } : {})
                         },
                         credentials: 'include',
-                        body: JSON.stringify({ studentId, subject, message }),
+                        body: JSON.stringify({ className, subject, message }),
                     });
                     const data = await response.json().catch(() => ({}));
                     if (!response.ok) {
@@ -95,13 +101,14 @@ export function renderSettings() {
                     }
                     setStatus('Email sent successfully!', 'success');
                     form.reset();
+                    classSelect.selectedIndex = 0;
                 }
                 catch (error) {
                     console.error('Failed to send email', error);
                     setStatus(error instanceof Error ? error.message : 'Failed to send email.', 'error');
                 }
             });
-            void loadStudents();
+            void loadClasses();
         }, 0);
     }
     return `
@@ -110,12 +117,12 @@ export function renderSettings() {
             ${isTeacher
         ? `
                 <div class="bg-white p-6 rounded-lg shadow-md space-y-4">
-                    <h2 class="text-2xl font-semibold">Email a Student</h2>
-                    <p class="text-slate-600">Send important updates directly to your students from the portal.</p>
+                    <h2 class="text-2xl font-semibold">Email a Class</h2>
+                    <p class="text-slate-600">Send important updates directly to every student enrolled in a class.</p>
                     <form id="teacher-email-form" class="space-y-4">
                         <div>
-                            <label for="email-student-select" class="block text-sm font-medium text-slate-700 mb-1">Student</label>
-                            <select id="email-student-select" class="w-full border border-slate-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
+                            <label for="email-class-select" class="block text-sm font-medium text-slate-700 mb-1">Class</label>
+                            <select id="email-class-select" class="w-full border border-slate-300 rounded-md px-3 py-2 focus:ring-2 focus:ring-blue-500 focus:border-blue-500" required>
                                 <option value="">Loading...</option>
                             </select>
                         </div>

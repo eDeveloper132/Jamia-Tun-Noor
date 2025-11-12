@@ -139,6 +139,7 @@ export function renderStudentDashboard(): string {
                         // TODO: Send update to backend to persist className
                         await updateUserClass(studentId, selectedClass);
                         // Re-render the dashboard after class selection
+                        window.location.reload();
                         const appRoot = document.getElementById('app-root');
                         if (appRoot) {
                             appRoot.innerHTML = renderStudentDashboard();

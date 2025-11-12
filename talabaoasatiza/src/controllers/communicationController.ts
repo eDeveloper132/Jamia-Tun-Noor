@@ -21,42 +21,57 @@ function formatMessageBody(body: string): { html: string; text: string } {
   };
 }
 
-export async function listStudentsForTeacher(req: AuthRequest, res: Response) {
+export async function listClassesForTeacher(req: AuthRequest, res: Response) {
   try {
-    const students = await UserModel.find({ role: "student" })
-      .select(["_id", "name", "email", "className"])
-      .sort({ name: 1 });
+    const classes = await UserModel.aggregate<{ _id: string; studentCount: number }>([
+      {
+        $match: {
+          role: "student",
+          className: { $exists: true, $nin: [null, ""] },
+        },
+      },
+      {
+        $group: {
+          _id: "$className",
+          studentCount: { $sum: 1 },
+        },
+      },
+      {
+        $sort: { _id: 1 },
+      },
+    ]);
 
     return res.json({
-      students: students.map((student: any) => ({
-        id: student._id.toString(),
-        name: student.name,
-        email: student.email,
-        className: student.className ?? undefined,
+      classes: classes.map((item) => ({
+        name: item._id,
+        studentCount: item.studentCount,
       })),
     });
   } catch (error) {
-    console.error("Failed to list students for teacher:", error);
-    return res.status(500).json({ error: "Failed to load students." });
+    console.error("Failed to list classes for teacher:", error);
+    return res.status(500).json({ error: "Failed to load classes." });
   }
 }
 
-export async function sendStudentEmail(req: AuthRequest, res: Response) {
+export async function sendClassEmail(req: AuthRequest, res: Response) {
   try {
-    const { studentId, subject, message } = req.body as {
-      studentId?: string;
+    const { className, subject, message } = req.body as {
+      className?: string;
       subject?: string;
       message?: string;
     };
 
-    if (!studentId || !subject || !message) {
-      return res.status(400).json({ error: "Student, subject, and message are required." });
+    if (!className || !subject || !message) {
+      return res.status(400).json({ error: "Class, subject, and message are required." });
     }
 
-    const student = await UserModel.findById(studentId).select(["name", "email", "role"]);
+    const students = await UserModel.find({
+      role: "student",
+      className,
+    }).select(["name", "email"]);
 
-    if (!student || student.role !== "student") {
-      return res.status(404).json({ error: "Student not found." });
+    if (!students || students.length === 0) {
+      return res.status(404).json({ error: "No students found for the selected class." });
     }
 
     const teacherName =
@@ -66,7 +81,12 @@ export async function sendStudentEmail(req: AuthRequest, res: Response) {
 
     const { html, text } = formatMessageBody(message);
 
-    const emailHtml = `
+    let sentCount = 0;
+    const failures: string[] = [];
+
+    for (const student of students) {
+      try {
+        const personalizedHtml = `
       <div style="font-family: Arial, sans-serif; line-height: 1.6;">
         <p>Assalamualaikum ${escapeHtml(student.name)},</p>
         ${html}
@@ -74,13 +94,32 @@ export async function sendStudentEmail(req: AuthRequest, res: Response) {
       </div>
     `;
 
-    const emailText = `Assalamualaikum ${student.name},\n\n${text}\n\nRegards,\n${teacherName}`;
+        const personalizedText = `Assalamualaikum ${student.name},\n\n${text}\n\nRegards,\n${teacherName}`;
 
-    await sendMail(student.email, subject, emailHtml, emailText);
+        await sendMail(student.email, subject, personalizedHtml, personalizedText);
+        sentCount += 1;
+      } catch (error) {
+        console.error(`Failed to send email to ${student.email}:`, error);
+        failures.push(student.email);
+      }
+    }
 
-    return res.json({ message: "Email sent successfully." });
+    if (sentCount === 0) {
+      return res.status(500).json({ error: "Failed to send email to the selected class." });
+    }
+
+    const messageText =
+      failures.length > 0
+        ? `Email sent to ${sentCount} students, but failed for ${failures.length}.`
+        : "Email sent to all students in the class successfully.";
+
+    return res.json({
+      message: messageText,
+      sent: sentCount,
+      failed: failures,
+    });
   } catch (error) {
-    console.error("Failed to send email to student:", error);
+    console.error("Failed to send email to class:", error);
     return res.status(500).json({ error: "Failed to send email." });
   }
 }

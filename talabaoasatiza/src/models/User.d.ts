@@ -15,6 +15,9 @@ export interface IUser extends mongoose.Document {
     forgotPasswordExpiry?: Date | null;
     verificationToken?: string | null;
     verificationTokenExpiry?: Date | null;
+    pastQualifications?: string[];
+    currentEnrollment?: string;
+    profilePicture: string;
     createdAt: Date;
     updatedAt: Date;
 }

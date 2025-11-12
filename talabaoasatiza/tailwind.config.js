@@ -7,7 +7,18 @@ module.exports = {
     './public/**/*.ts',
   ],
   theme: {
-    extend: {},
+    extend: {
+      colors: {
+        primary: 'var(--primary-color)',
+        secondary: 'var(--secondary-color)',
+        accent: 'var(--accent-color)',
+        'text-color': 'var(--text-color)',
+        'background-color': 'var(--background-color)',
+      },
+      fontFamily: {
+        sans: ['Poppins', 'sans-serif'],
+      },
+    },
   },
   plugins: [],
 }

@@ -16,11 +16,13 @@
     <nav class="bg-white shadow-md">
         <div class="container mx-auto px-4">
             <div class="flex justify-between items-center py-4">
-                <a href="/" class="text-xl font-bold text-blue-600">My App</a>
+                <a href="/" class="text-xl font-bold text-blue-600">Ishaat-e-Islam</a>
                 <div class="hidden md:flex space-x-4">
-                    <a href="/" class="text-gray-600 hover:text-blue-600">Dashboard</a>
-                    <a href="/profile" class="text-gray-600 hover:text-blue-600">Profile</a>
-                    <a href="/settings" class="text-gray-600 hover:text-blue-600">Settings</a>
+                    <div class="flex items-center space-x-4">
+                        <a href="/" class="text-gray-600 hover:text-blue-600">Dashboard</a>
+                        <a href="/profile" class="text-gray-600 hover:text-blue-600">Profile</a>
+                        <a href="/settings" class="text-gray-600 hover:text-blue-600">To-Mail</a>
+                    </div>
                     <button id="logoutBtn" class="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600">Logout</button>
                 </div>
                 <div class="md:hidden">
@@ -35,20 +37,22 @@
         <div id="mobileMenu" class="hidden md:hidden">
             <a href="/" class="block px-4 py-2 text-gray-600 hover:bg-gray-200">Dashboard</a>
             <a href="/profile" class="block px-4 py-2 text-gray-600 hover:bg-gray-200">Profile</a>
-            <a href="/settings" class="block px-4 py-2 text-gray-600 hover:bg-gray-200">Settings</a>
+            <a href="/settings" class="block px-4 py-2 text-gray-600 hover:bg-gray-200">To-Mail</a>
             <button id="logoutBtnMobile" class="block w-full text-left px-4 py-2 text-red-500 hover:bg-gray-200">Logout</button>
         </div>
     </nav>
-    <div id="root"></div>
+    <div id="root" class="container mx-auto p-4"></div>
     <script>
         const mobileMenuBtn = document.getElementById('mobileMenuBtn');
         const mobileMenu = document.getElementById('mobileMenu');
-        mobileMenuBtn.addEventListener('click', () => {
-            mobileMenu.classList.toggle('hidden');
-        });
-
         const logoutBtn = document.getElementById('logoutBtn');
         const logoutBtnMobile = document.getElementById('logoutBtnMobile');
+
+        if (mobileMenuBtn && mobileMenu) {
+            mobileMenuBtn.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+        }
 
         async function logout() {
             try {
@@ -63,13 +67,121 @@
             }
         }
 
-        logoutBtn.addEventListener('click', logout);
-        logoutBtnMobile.addEventListener('click', logout);
+        if (logoutBtn) {
+            logoutBtn.addEventListener('click', logout);
+        }
+        if (logoutBtnMobile) {
+            logoutBtnMobile.addEventListener('click', logout);
+        }
     </script>
     <script type="module">
         import { renderProfile } from '/js/components/Profile.js';
+
         const root = document.getElementById('root');
-        root.innerHTML = renderProfile();
+        const userString = localStorage.getItem('user');
+
+        if (!userString) {
+            console.error('User not found in localStorage. Redirecting to login.');
+            window.location.href = '/login';
+        } else {
+            let user;
+            try {
+                user = JSON.parse(userString);
+            } catch (error) {
+                console.error('Failed to parse user from localStorage. Redirecting to login.', error);
+                window.location.href = '/login';
+            }
+
+            if (user) {
+                root.innerHTML = renderProfile(user);
+
+                const editProfileBtn = document.getElementById('editProfileBtn');
+                const cancelEditProfileBtn = document.getElementById('cancelEditProfileBtn');
+                const cancelEditProfileBtnSecondary = document.getElementById('cancelEditProfileBtnSecondary');
+                const editProfileForm = document.getElementById('editProfileForm');
+                const profileSummary = document.getElementById('profileSummary');
+                const profileForm = document.getElementById('profileForm');
+                const statusElement = document.getElementById('profileUpdateStatus');
+
+                const toggleEditMode = (open) => {
+                    if (profileSummary) {
+                        profileSummary.classList.toggle('hidden', open);
+                    }
+                    if (editProfileForm) {
+                        editProfileForm.classList.toggle('hidden', !open);
+                    }
+                    if (statusElement) {
+                        statusElement.textContent = '';
+                        statusElement.className = 'text-sm text-gray-600';
+                    }
+                };
+
+                if (editProfileBtn) {
+                    editProfileBtn.addEventListener('click', () => toggleEditMode(true));
+                }
+                const cancelButtons = [cancelEditProfileBtn, cancelEditProfileBtnSecondary].filter(Boolean);
+                cancelButtons.forEach((btn) => btn.addEventListener('click', () => toggleEditMode(false)));
+
+                if (profileForm) {
+                    profileForm.addEventListener('submit', async (event) => {
+                        event.preventDefault();
+                        const profilePicture = document.getElementById('profilePicture');
+                        const pastQualificationsInput = document.getElementById('pastQualifications');
+                        const currentEnrollmentInput = document.getElementById('currentEnrollment');
+
+                        if (!profilePicture || !pastQualificationsInput || !currentEnrollmentInput) {
+                            console.error('Missing profile form fields.');
+                            return;
+                        }
+
+                        const pastQualifications = pastQualificationsInput.value
+                            ? pastQualificationsInput.value.split(',').map(q => q.trim()).filter(Boolean)
+                            : [];
+
+                        if (statusElement) {
+                            statusElement.textContent = 'Saving changes...';
+                            statusElement.className = 'text-sm text-blue-600';
+                        }
+
+                        try {
+                            const response = await fetch(`/api/users/profile/${user._id}`, {
+                                method: 'PATCH',
+                                headers: { 'Content-Type': 'application/json' },
+                                body: JSON.stringify({
+                                    profilePicture: profilePicture.value,
+                                    pastQualifications,
+                                    currentEnrollment: currentEnrollmentInput.value,
+                                }),
+                            });
+
+                            if (!response.ok) {
+                                if (statusElement) {
+                                    statusElement.textContent = 'Failed to update profile. Please try again.';
+                                    statusElement.className = 'text-sm text-red-600';
+                                }
+                                return;
+                            }
+
+                            const updatedUser = await response.json();
+                            localStorage.setItem('user', JSON.stringify(updatedUser.user));
+
+                            if (statusElement) {
+                                statusElement.textContent = 'Profile updated. Refreshing...';
+                                statusElement.className = 'text-sm text-green-600';
+                            }
+
+                            setTimeout(() => window.location.reload(), 600);
+                        } catch (error) {
+                            console.error('An error occurred while updating the profile.', error);
+                            if (statusElement) {
+                                statusElement.textContent = 'Unexpected error. Please try again.';
+                                statusElement.className = 'text-sm text-red-600';
+                            }
+                        }
+                    });
+                }
+            }
+        }
     </script>
 </body>
 </html>
