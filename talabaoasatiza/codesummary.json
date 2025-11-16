@@ -10,7 +10,7 @@
       "size": 406,
       "created": "-",
       "modified": "2025-10-26 20:47:38.615529000 +0500",
-      "content": "PORT = 4500\r\nMONGO_PASSWORD = jamiatunnoorofficial\r\nMONGO_USER = jamiatunnoorofficial\r\nJWT_SECRET= 6fb3846f17fe6dc1773e1bd4e97166d67aadb15c1812448d83f90bde929d9646507b6ed13e5f507aee115e839c4354f2\r\nJWT_EXPIRES_IN= 1d\r\nMAIL_USER= jamia.tun.noor.official@gmail.com\r\nMAIL_PASS= yqacwctzyphcsxst\r\nNODE_ENV = development\r\nFRONTEND_URL = https://jamia-tun-noor-official.vercel.app\r\nMAIL_FROM_NAME = Jamia-Tun-Noor",
+      "content": "PORT = 4500\r\nMONGO_PASSWORD = <hidden>\r\nMONGO_USER = <hidden>\r\nJWT_SECRET= <hidden>\r\nJWT_EXPIRES_IN= 1d\r\nMAIL_USER= <hidden>\r\nMAIL_PASS= <hidden>\r\nNODE_ENV = development\r\nFRONTEND_URL = https://jamia-tun-noor-official.vercel.app\r\nMAIL_FROM_NAME = Jamia-Tun-Noor",
       "lines": 9,
       "isText": true
     },
