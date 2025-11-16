@@ -6,6 +6,16 @@ A comprehensive platform for managing students and teachers.
 
 This project is a web application designed to manage students and teachers. It features separate dashboards for students and teachers, user authentication, and responsive design. The frontend is built with plain HTML, CSS (Tailwind CSS), and TypeScript, while the backend uses Node.js with Express.
 
+## Features
+
+*   User authentication (signup, login, logout)
+*   Role-based access control (student, teacher, nazim)
+*   Student and Teacher dashboards
+*   Attendance tracking
+*   Task management
+*   Exam scheduling
+*   Real-time communication with Socket.io
+
 ## Getting Started
 
 These instructions will get you a copy of the project up and running on your local machine for development and testing purposes.
@@ -38,6 +48,13 @@ Make sure you have Node.js and npm (or yarn) installed.
 
 The application will be accessible at `http://localhost:4000` (or your specified port).
 
+## Available Scripts
+
+*   `npm start`: Starts the server.
+*   `npm run seed`: Seeds the database with initial data.
+*   `npm run seed:full`: Seeds the database with a full set of sample data.
+*   `npm run build:css`: Builds the CSS using PostCSS and Tailwind CSS.
+
 ## Built Using
 
 -   [MongoDB](https://www.mongodb.com/) - Database
@@ -45,3 +62,4 @@ The application will be accessible at `http://localhost:4000` (or your specified
 -   [Node.js](https://nodejs.org/en/) - JavaScript Runtime
 -   [TypeScript](https://www.typescriptlang.org/) - Typed JavaScript
 -   [Tailwind CSS](https://tailwindcss.com/) - Utility-first CSS Framework
+-   [Socket.io](https://socket.io/) - Real-time communication library
